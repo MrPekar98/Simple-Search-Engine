@@ -1,9 +1,10 @@
 CC=g++
+SRC=main.cpp
+IN := crawler.cpp
 CFLAGS=-lcurl -pthread
-IN=main.c
 
-scam: ${IN}
-    $(CC) -o scam $(IN) $(CFLAGS)
+scam: $(SRC)
+	$(CC) -o scam $(SRC) $(foreach i, $(IN), $(i)) $(CFLAGS)
 
 clean:
-    rm scam
+	rm scam
