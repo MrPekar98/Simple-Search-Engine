@@ -12,7 +12,7 @@ namespace crawler
 
     public:
         void add_url(const std::string& url) noexcept;
-        const std::string& get_next() noexcept;
+        std::string get_next() noexcept;
         bool empty() const noexcept;
     };
 }
