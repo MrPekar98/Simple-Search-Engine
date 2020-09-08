@@ -37,4 +37,10 @@ namespace crawler
 
         return ret_set;
     }
+
+    // Returns set of shingles of specified length.
+    std::set<std::string> shingles(const std::string& str, unsigned short shingle_count)
+    {
+
+    }
 }
