@@ -30,9 +30,9 @@ namespace crawler
 
     // TODO: Use optional here.
     // Returns next URL in line and removes it.
-    const std::string& frontier::get_next() noexcept
+    std::string frontier::get_next() noexcept
     {
-        std::string& next = this->urls.front();
+        std::string next = this->urls.front();
         this->urls.pop();
 
         return next;
