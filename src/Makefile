@@ -1,6 +1,6 @@
 CC=g++
 SRC=main.cpp
-IN := crawler.cpp data/frontier.cpp
+IN := crawler.cpp data/frontier.cpp shingles.cpp
 CFLAGS=-lcurl -pthread
 
 scam: $(SRC)
