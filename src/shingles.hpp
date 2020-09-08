@@ -2,6 +2,7 @@
 #include <string>
 
 #define JACC_THRES 0.9
+#define SHING_LEN 4
 
 namespace crawler
 {
