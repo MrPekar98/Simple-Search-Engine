@@ -1,10 +1,12 @@
 #include "shingles.hpp"
+#include <vector>
 
 namespace crawler
 {
     // Prototypes.
     std::set<std::string> set_intersection(const std::set<std::string>& s1, const std::set<std::string>& s2);
     std::set<std::string> set_union(const std::set<std::string>& s1, const std::set<std::string>& s2);
+    static std::vector<std::string> str_terms(const std::string& str);
 
     // Computes Jaccard coefficient.
     double jaccard(const std::set<std::string>& set1, const std::set<std::string>& set2)
@@ -41,6 +43,52 @@ namespace crawler
     // Returns set of shingles of specified length.
     std::set<std::string> shingles(const std::string& str, unsigned short shingle_count)
     {
+        std::set<std::string> shingles;
+        std::vector<std::string> terms = str_terms(str);
 
+        for (unsigned i = 0; i < terms.size() / shingle_count; i++)
+        {
+            std::string shingle = "";
+
+            for (unsigned j = 0; j < shingle_count; j++)
+            {
+                shingle += terms[i * shingle_count + j];
+                shingle += ' ';
+            }
+
+            shingle.erase(shingle.length() - 1);
+            shingles.insert(shingle);
+        }
+
+        return shingles;
+    }
+
+    // Creates set of terms in string.
+    static std::vector<std::string> str_terms(const std::string& str)
+    {
+        std::vector<std::string> terms;
+        std::string temp = "";
+        const char* c_str = str.c_str();
+        unsigned length = str.length();
+
+        for (unsigned i = 0; i < length; i++)
+        {
+            if (c_str[i] == ' ')
+            {
+                terms.push_back(temp);
+                temp = "";
+            }
+
+            else if (i == length - 1)
+            {
+                temp += c_str[i];
+                terms.push_back(temp);
+            }
+
+            else
+                temp += c_str[i];
+        }
+
+        return terms;
     }
 }
