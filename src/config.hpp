@@ -1,3 +1,4 @@
+// Crawler macros.
 #define DEBUG 1
 #define THREADING 0
 
