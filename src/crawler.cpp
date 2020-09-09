@@ -10,7 +10,7 @@
 #include "config.hpp"
 #include <iostream>
 
-namespace crawler
+namespace scam::crawler
 {
     // CURL callbacks must be static member of a class.
     class curl_write

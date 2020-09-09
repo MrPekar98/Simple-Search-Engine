@@ -1,6 +1,6 @@
 #include "frontier.hpp"
 
-namespace crawler
+namespace scam::crawler
 {
     // Checks whether URL already exists in queue.
     bool frontier::url_exists(const std::string& url) noexcept

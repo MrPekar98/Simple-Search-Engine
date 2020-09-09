@@ -1,7 +1,7 @@
 #include "shingles.hpp"
 #include <vector>
 
-namespace crawler
+namespace scam::crawler
 {
     // Prototypes.
     std::set<std::string> set_intersection(const std::set<std::string>& s1, const std::set<std::string>& s2);

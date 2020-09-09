@@ -1,6 +1,6 @@
 #include <string>
 
-namespace crawler
+namespace scam::crawler
 {
     struct document
     {

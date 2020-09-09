@@ -1,7 +1,7 @@
 #include <queue>
 #include <string>
 
-namespace crawler
+namespace scam::crawler
 {
     // Simple frontier with no prioritization and politenes..
     class frontier

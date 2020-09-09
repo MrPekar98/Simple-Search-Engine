@@ -4,7 +4,7 @@
 
 #define USER_AGENT "scam agent"
 
-namespace crawler
+namespace scam::crawler
 {
     // Prototypes.
     std::vector<document> crawl(const std::vector<std::string>& urls);
