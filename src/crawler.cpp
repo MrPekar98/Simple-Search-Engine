@@ -2,6 +2,7 @@
 #include <string.h>
 #include <string>
 #include <thread>
+#include <mutex>
 #include <curl/curl.h>
 #include "crawler.hpp"
 #include "shingles.hpp"
@@ -39,46 +40,32 @@ namespace scam::crawler
     // Returns vector of document contents. This function will potentially never terminate.
     void crawl(const std::vector<std::string>& urls, std::vector<document>& result_documents)
     {
-        std::vector<std::thread*> threads;
-        std::thread t;
-
         // Seeding.
         frontier url_frontier;
         load_seed_set(url_frontier, urls);
 
-        while (!url_frontier.empty() || threads_active(threads))
+        while (!url_frontier.empty())
         {
-            t = std::thread([&url_frontier, &result_documents](){
-                std::string url = url_frontier.get_next();
-                std::string buffer;
-                CURL* handle = handle_setup(url);
-                curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write::write_data);
-                curl_easy_setopt(handle, CURLOPT_WRITEDATA, &buffer);
-                curl_easy_perform(handle);
+            std::string url = url_frontier.get_next();
+            std::string buffer;
+            CURL* handle = handle_setup(url);
+            curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write::write_data);
+            curl_easy_setopt(handle, CURLOPT_WRITEDATA, &buffer);
+            curl_easy_perform(handle);
 #if DEBUG
-                long response_code;
-                char* host = NULL;
-                curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &response_code);
-                curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &host);
-                std::cout << "Response code: " << response_code << std::endl;
+            long response_code;
+            char* host = NULL;
+            curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &response_code);
+            curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &host);
+            std::cout << "Response code: " << response_code << std::endl;
 
-                if (host)
-                    std::cout << "Host: " << url << std::endl << std::endl;
+            if (host)
+                std::cout << "Host: " << url << std::endl << std::endl;
 #endif
 
-                curl_handle_write(result_documents, url, buffer, url_frontier);
-                curl_easy_cleanup(handle);
-            });
-
-#if !THREADING
-            t.join();
-#endif
-            threads.push_back(&t);
+            curl_handle_write(result_documents, url, buffer, url_frontier);
+            curl_easy_cleanup(handle);
         }
-
-#if THREADING
-        join_threads(threads);
-#endif
     }
 
     // Loads seed set into URL frontier.
