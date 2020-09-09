@@ -37,9 +37,8 @@ namespace scam::crawler
     static std::set<std::string> extract_links(const std::string& html);
 
     // Returns vector of document contents. This function will potentially never terminate.
-    std::vector<document> crawl(const std::vector<std::string>& urls)
+    void crawl(const std::vector<std::string>& urls, std::vector<document>& result_documents)
     {
-        std::vector<document> documents;
         std::vector<std::thread*> threads;
         std::thread t;
 
@@ -49,7 +48,7 @@ namespace scam::crawler
 
         while (!url_frontier.empty() || threads_active(threads))
         {
-            t = std::thread([&url_frontier, &documents](){
+            t = std::thread([&url_frontier, &result_documents](){
                 std::string url = url_frontier.get_next();
                 std::string buffer;
                 CURL* handle = handle_setup(url);
@@ -67,7 +66,7 @@ namespace scam::crawler
                     std::cout << "Host: " << url << std::endl << std::endl;
 #endif
 
-                curl_handle_write(documents, url, buffer, url_frontier);
+                curl_handle_write(result_documents, url, buffer, url_frontier);
                 curl_easy_cleanup(handle);
             });
 
@@ -80,8 +79,6 @@ namespace scam::crawler
 #if THREADING
         join_threads(threads);
 #endif
-
-        return documents;
     }
 
     // Loads seed set into URL frontier.
@@ -210,6 +207,7 @@ namespace scam::crawler
     // Returns vector of document contents with limit of collection.
     std::vector<document> crawl(const std::vector<std::string>& urls, unsigned long doc_limit)
     {
-        return crawl(urls);
+        std::vector<document> docs;
+        return docs;
     }
 }
