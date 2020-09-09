@@ -191,7 +191,20 @@ namespace crawler
     // Extracts hyperlinks from HTML content.
     static std::set<std::string> extract_links(const std::string& html)
     {
+        std::set<std::string> links;
+        unsigned length = html.length();
 
+        for (unsigned i = 0; i < length; i++)
+        {
+            if (html.substr(i, 4).compare("href") == 0 && html.substr(i + 6, 4).compare("http") == 0)
+            {
+                std::string startstr = html.substr(i + 6);
+                links.insert(startstr.substr(0, startstr.find_first_of('"')));
+                i = startstr.find_first_of('"') + i;
+            }
+        }
+
+        return links;
     }
 
     // Returns vector of document contents with limit of collection.
