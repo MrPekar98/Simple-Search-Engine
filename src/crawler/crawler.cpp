@@ -8,7 +8,7 @@
 #include "shingles.hpp"
 #include "data/frontier.hpp"
 #include <cppw_htmlparser.h>
-#include "config.hpp"
+#include "../config.hpp"
 #include <iostream>
 
 namespace scam::crawler
