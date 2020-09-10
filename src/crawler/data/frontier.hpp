@@ -1,6 +1,7 @@
 #include <queue>
 #include <string>
 #include <vector>
+#include <exception>
 
 namespace scam::crawler
 {
@@ -26,8 +27,15 @@ namespace scam::crawler
         std::vector<std::queue<std::string>> back_queue;
 
     public:
-        void add_url(const std::string& url, unsigned short priority);
+        void add_url(const std::string& url, unsigned short priority) throw();
         bool empty() const noexcept override;
         std::string get_next() noexcept override;
+    };
+
+    // Exception class.
+    class priority_exception: public std::exception
+    {
+    public:
+        const char* what() const noexcept override;
     };
 }
