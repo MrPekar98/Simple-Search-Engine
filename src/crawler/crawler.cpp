@@ -19,11 +19,16 @@ namespace scam::crawler
     public:
         static size_t write_data(void* ptr, size_t size, size_t nmemb, void* buffer)
         {
-            // TODO: Not all data is in ptr for some reason.
-            *((std::string*) buffer) += (char*) ptr;
-            *((std::string*) buffer) += '\0';
+            std::string* str = ((std::string*) buffer);
+            str->append((char*) ptr, nmemb);
 
-            return nmemb + 1;
+            for (char& c : *str)
+            {
+                if (c == 13)
+                    c = 32;
+            }
+
+            return nmemb;
         }
     };
 
