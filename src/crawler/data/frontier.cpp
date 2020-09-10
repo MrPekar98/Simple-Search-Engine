@@ -46,4 +46,22 @@ namespace scam::crawler
     {
         return this->urls.empty();
     }
+
+    // Add url into front queue.
+    void mercator::add_url(const std::string& url, unsigned short priority)
+    {
+
+    }
+
+    // Checks for frontier being empty.
+    bool mercator::empty() const noexcept
+    {
+        return false;
+    }
+
+    // Gets next URL from back queue. Fills up a queue from back queue if empty.
+    std::string mercator::get_next() noexcept
+    {
+        return "Not implemented";
+    }
 }
