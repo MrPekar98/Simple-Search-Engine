@@ -2,6 +2,9 @@
 
 namespace scam::crawler
 {
+    // Frontier destructor.
+    frontier::~frontier() {}
+
     // Checks whether URL already exists in queue.
     bool frontier::url_exists(const std::string& url) noexcept
     {
