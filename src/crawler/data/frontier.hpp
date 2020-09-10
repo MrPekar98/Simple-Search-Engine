@@ -8,11 +8,14 @@ namespace scam::crawler
     {
     private:
         std::queue<std::string> urls;
+
+    protected:
         bool url_exists(const std::string& url) noexcept;
 
     public:
-        void add_url(const std::string& url) noexcept;
-        std::string get_next() noexcept;
-        bool empty() const noexcept;
+        virtual ~frontier();
+        virtual void add_url(const std::string& url) noexcept;
+        virtual std::string get_next() noexcept;
+        virtual bool empty() const noexcept;
     };
 }
