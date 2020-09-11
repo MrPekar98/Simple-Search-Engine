@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <mutex>
 
 namespace scam::crawler
 {
@@ -9,6 +10,7 @@ namespace scam::crawler
     class frontier
     {
     protected:
+        std::mutex mtx;
         std::queue<std::string> urls;
         virtual bool url_exists(const std::string& url) noexcept;
 
