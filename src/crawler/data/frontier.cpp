@@ -28,18 +28,28 @@ namespace scam::crawler
     // Adds URL if not already added.
     void frontier::add_url(const std::string& url) noexcept
     {
+        this->mtx.lock();
+
         if (this->urls.empty() || !url_exists(url))
             this->urls.push(url);
+
+        this->mtx.unlock();
     }
 
     // Returns next URL in line and removes it.
     std::string frontier::get_next() throw()
     {
+        this->mtx.lock();
+
         if (empty())
+        {
+            this->mtx.unlock();
             throw std::bad_function_call();
+        }
 
         std::string next = this->urls.front();
         this->urls.pop();
+        this->mtx.unlock();
 
         return next;
     }
