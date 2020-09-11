@@ -10,6 +10,8 @@
 #include <cppw_htmlparser.h>
 #include "../config.hpp"
 #include <iostream>
+#include <functional>
+#include <chrono>
 
 namespace scam::crawler
 {
@@ -32,9 +34,13 @@ namespace scam::crawler
         }
     };
 
+    // Private global mutex.
+    static std::mutex mtx;
+
     // Prototypes.
     static void load_seed_set(frontier& f, const std::vector<std::string>& urls);
     static inline void join_threads(std::vector<std::thread*>& threads);
+    static void log_session(CURL* handle);
     static CURL* handle_setup(const std::string& url);
     static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, frontier& urls);
     static bool analyse_content(const std::string& html_content, const std::vector<document>& documents);
@@ -49,37 +55,34 @@ namespace scam::crawler
         load_seed_set(url_frontier, urls);
 
 #if THREADING
-        // Threading.
-        std::mutex mtx;
         std::vector<std::thread*> threads;
 
         for (unsigned i = 0; i < THREAD_COUNT; i++)
         {
-            threads.push_back(new thread([&url_frontier, &result_documents, &mtx](){
+            threads.push_back(new thread([&url_frontier, &result_documents](){
 #endif
                 while (!url_frontier.empty())
                 {
-                    std::string url = url_frontier.get_next();
-                    std::string buffer;
+                    std::string url, buffer;
+
+                    try
+                    {
+                        url = url_frontier.get_next();
+                    }
+
+                    catch (std::bad_function_call& exc)
+                    {
+                        std::chrono::seconds(4);
+                        continue;
+                    }
+
                     CURL* handle = handle_setup(url);
                     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write::write_data);
                     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &buffer);
                     curl_easy_perform(handle);
-#if DEBUG
-                    long response_code;
-                    char* host = NULL;
-                    curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &response_code);
-                    curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &host);
-#if THREADING
-                    mtx.lock();
-#endif
-                    std::cout << "Response code: " << response_code << std::endl;
 
-                    if (host)
-                        std::cout << "Host: " << url << std::endl << std::endl;
-#if THREADING
-                    mtx.unlock();
-#endif
+#if DEBUG
+                    log_session(handle);
 #endif
 
                     curl_handle_write(result_documents, url, buffer, url_frontier);
@@ -109,6 +112,26 @@ namespace scam::crawler
         {
             threads[i]->join();
         }
+    }
+
+    // Logs connection information.
+    static void log_session(CURL* handle)
+    {
+        long response_code;
+        char* host = NULL;
+        curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &response_code);
+        curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &host);
+
+#if THREADING
+        mtx.lock();
+#endif
+        std::cout << "Response code: " << response_code << std::endl;
+
+        if (host)
+            std::cout << "Host: " << host << std::endl << std::endl;
+#if THREADING
+        mtx.unlock();
+#endif
     }
 
     // CURL crawling setup.
