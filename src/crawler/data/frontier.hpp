@@ -15,7 +15,7 @@ namespace scam::crawler
     public:
         virtual ~frontier();
         virtual void add_url(const std::string& url) noexcept;
-        virtual std::string get_next() noexcept;
+        virtual std::string get_next() throw();
         virtual bool empty() const noexcept;
     };
 
@@ -29,7 +29,7 @@ namespace scam::crawler
     public:
         void add_url(const std::string& url, unsigned short priority) throw();
         bool empty() const noexcept override;
-        std::string get_next() noexcept override;
+        std::string get_next() throw() override;
     };
 
     // Exception class.

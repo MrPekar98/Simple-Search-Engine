@@ -1,4 +1,5 @@
 #include "frontier.hpp"
+#include <functional>
 
 namespace scam::crawler
 {
@@ -31,10 +32,12 @@ namespace scam::crawler
             this->urls.push(url);
     }
 
-    // TODO: Use optional here.
     // Returns next URL in line and removes it.
-    std::string frontier::get_next() noexcept
+    std::string frontier::get_next() throw()
     {
+        if (empty())
+            throw std::bad_function_call();
+
         std::string next = this->urls.front();
         this->urls.pop();
 
@@ -61,7 +64,7 @@ namespace scam::crawler
     }
 
     // Gets next URL from back queue. Fills up a queue from back queue if empty.
-    std::string mercator::get_next() noexcept
+    std::string mercator::get_next() throw()
     {
         return "Not implemented";
     }
