@@ -37,14 +37,14 @@ namespace scam::crawler
     }
 
     // Returns next URL in line and removes it.
-    std::string frontier::get_next() throw()
+    std::string frontier::get_next()
     {
         this->mtx.lock();
 
         if (empty())
         {
             this->mtx.unlock();
-            throw std::bad_function_call();
+            return "";
         }
 
         std::string next = this->urls.front();
@@ -74,7 +74,7 @@ namespace scam::crawler
     }
 
     // Gets next URL from back queue. Fills up a queue from back queue if empty.
-    std::string mercator::get_next() throw()
+    std::string mercator::get_next()
     {
         return "Not implemented";
     }
