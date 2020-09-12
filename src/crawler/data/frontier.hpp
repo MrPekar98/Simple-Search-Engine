@@ -3,6 +3,7 @@
 #include <vector>
 #include <exception>
 #include <mutex>
+#include <initializer_list>
 
 namespace scam::crawler
 {
@@ -15,10 +16,13 @@ namespace scam::crawler
         virtual bool url_exists(const std::string& url) noexcept;
 
     public:
+        frontier() {}
+        frontier(const std::initializer_list<std::string>& il);
         virtual ~frontier();
         virtual void add_url(const std::string& url) noexcept;
         virtual std::string get_next();
         virtual bool empty() const noexcept;
+        virtual size_t size() const noexcept;
     };
 
     // Class with front and back queues.
@@ -32,6 +36,7 @@ namespace scam::crawler
         void add_url(const std::string& url, unsigned short priority) throw();
         bool empty() const noexcept override;
         std::string get_next() override;
+        size_t size() const noexcept override;
     };
 
     // Exception class.

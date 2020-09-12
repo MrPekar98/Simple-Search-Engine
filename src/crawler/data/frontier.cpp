@@ -3,6 +3,15 @@
 
 namespace scam::crawler
 {
+    // Frontier constructor.
+    frontier::frontier(const std::initializer_list<std::string>& il)
+    {
+        for (auto& el : il)
+        {
+            this->urls.push(el);
+        }
+    }
+
     // Frontier destructor.
     frontier::~frontier() {}
 
@@ -60,6 +69,12 @@ namespace scam::crawler
         return this->urls.empty();
     }
 
+    // Returns size of frontier.
+    size_t frontier::size() const noexcept
+    {
+        return this->urls.size();
+    }
+
     // Add url into front queue.
     void mercator::add_url(const std::string& url, unsigned short priority) throw()
     {
@@ -77,6 +92,12 @@ namespace scam::crawler
     std::string mercator::get_next()
     {
         return "Not implemented";
+    }
+
+    // Returns size of mercator.
+    size_t mercator::size() const noexcept
+    {
+        return -1;
     }
 
     // Overridden exception class.
