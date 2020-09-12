@@ -63,16 +63,11 @@ namespace scam::crawler
 #endif
                 while (!url_frontier.empty())
                 {
-                    std::string url, buffer;
+                    std::string buffer, url = url_frontier.get_next();
 
-                    try
+                    if (url.size() == 0)
                     {
-                        url = url_frontier.get_next();
-                    }
-
-                    catch (std::bad_function_call& exc)
-                    {
-                        std::chrono::seconds(4);
+                        std::this_thread::sleep_for(std::chrono::seconds(4));
                         continue;
                     }
 
