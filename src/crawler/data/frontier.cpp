@@ -4,7 +4,7 @@
 namespace scam::crawler
 {
     // Frontier constructor.
-    frontier::frontier(const std::initializer_list<std::string>& il)
+    frontier::frontier(const std::initializer_list<std::string>& il) noexcept
     {
         for (auto& el : il)
         {
@@ -75,6 +75,28 @@ namespace scam::crawler
         return this->urls.size();
     }
 
+    // Mercator constructor.
+    mercator::mercator(unsigned short prio_depth) noexcept
+    {
+        for (int i = 0; i < prio_depth; i++)
+        {
+            this->front_queue.push_back(std::queue<std::string>());
+        }
+    }
+
+    // Mercator constructor.
+    mercator::mercator(std::initializer_list<std::pair<std::string, unsigned>>& il, unsigned short prio_depth) throw()
+        : mercator(prio_depth)
+    {
+        for (std::initializer_list<std::pair<std::string, unsigned>>::iterator it = il.begin(); it != il.end(); it++)
+        {
+            if (it->second < 0 || it->second >= this->front_queue.size())
+                throw priority_exception();
+
+            this->front_queue[it->second].push(it->first);
+        }
+    }
+
     // Add url into front queue.
     void mercator::add_url(const std::string& url, unsigned short priority) throw()
     {
@@ -87,7 +109,13 @@ namespace scam::crawler
     // Checks for frontier being empty.
     bool mercator::empty() const noexcept
     {
-        unsigned back_size = this->back_queue.size();
+        unsigned front_size = this->front_queue.size(), back_size = this->back_queue.size();
+
+        for (unsigned i = 0; i < front_size; i++)
+        {
+            if (!this->front_queue[i].empty())
+                return false;
+        }
 
         for (unsigned i = 0; i < back_size; i++)
         {

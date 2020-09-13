@@ -4,6 +4,7 @@
 #include <exception>
 #include <mutex>
 #include <initializer_list>
+#include <utility>
 
 namespace scam::crawler
 {
@@ -33,8 +34,8 @@ namespace scam::crawler
         std::vector<std::queue<std::string>> back_queue;
 
     public:
-        mercator() noexcept {}
-        mercator(std::initializer_list<std::string>& il) noexcept;
+        mercator(unsigned short prio_depth) noexcept;
+        mercator(std::initializer_list<std::pair<std::string, unsigned>>& il, unsigned short prio_depth) throw();
         void add_url(const std::string& url, unsigned short priority) throw();
         bool empty() const noexcept override;
         std::string get_next() override;
