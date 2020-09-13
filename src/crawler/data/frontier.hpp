@@ -16,8 +16,8 @@ namespace scam::crawler
         virtual bool url_exists(const std::string& url) noexcept;
 
     public:
-        frontier() {}
-        frontier(const std::initializer_list<std::string>& il);
+        frontier() noexcept {}
+        frontier(const std::initializer_list<std::string>& il) noexcept
         virtual ~frontier();
         virtual void add_url(const std::string& url) noexcept;
         virtual std::string get_next();
@@ -33,7 +33,8 @@ namespace scam::crawler
         std::vector<std::queue<std::string>> back_queue;
 
     public:
-        mercator() {}
+        mercator() noexcept {}
+        mercator(std::initializer_list<std::string>& il) noexcept;
         void add_url(const std::string& url, unsigned short priority) throw();
         bool empty() const noexcept override;
         std::string get_next() override;
