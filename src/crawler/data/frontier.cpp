@@ -88,7 +88,7 @@ namespace scam::crawler
         return false;
     }
 
-    // Gets next URL from back queue. Fills up a queue from back queue if empty.
+    // Gets next URL from back queue. Fills up a front queue from back queue if empty.
     std::string mercator::get_next()
     {
         return "Not implemented";
@@ -97,7 +97,19 @@ namespace scam::crawler
     // Returns size of mercator.
     size_t mercator::size() const noexcept
     {
-        return -1;
+        unsigned front_size = this->front_queue.size(), back_size = back_queue.size(), size = 0;
+
+        for (int i = 0; i < front_size; i++)
+        {
+            size += this->front_queue[i].size();
+        }
+
+        for (int i = 0; i < back_size; i++)
+        {
+            size += back_queue[i].size();
+        }
+
+        return size;
     }
 
     // Overridden exception class.
