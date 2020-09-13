@@ -85,7 +85,15 @@ namespace scam::crawler
     // Checks for frontier being empty.
     bool mercator::empty() const noexcept
     {
-        return false;
+        unsigned back_size = this->back_queue.size();
+
+        for (unsigned i = 0; i < back_size; i++)
+        {
+            if (!this->back_queue[i].empty())
+                return false;
+        }
+
+        return true;
     }
 
     // Gets next URL from back queue. Fills up a front queue from back queue if empty.
