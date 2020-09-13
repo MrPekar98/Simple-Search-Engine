@@ -26,13 +26,14 @@ namespace scam::crawler
     };
 
     // Class with front and back queues.
-    class mercator : private frontier
+    class mercator : public frontier
     {
     private:
         std::vector<std::queue<std::string>> front_queue;
         std::vector<std::queue<std::string>> back_queue;
 
     public:
+        mercator() {}
         void add_url(const std::string& url, unsigned short priority) throw();
         bool empty() const noexcept override;
         std::string get_next() override;
