@@ -78,7 +78,7 @@ namespace scam::crawler
     // Add url into front queue.
     void mercator::add_url(const std::string& url, unsigned short priority) throw()
     {
-        if (priority < 0 || priority > this->front_queue.size() + 1)
+        if (priority < 0 || priority >= this->front_queue.size())
             throw priority_exception();
 
         this->front_queue[priority].push(url);
