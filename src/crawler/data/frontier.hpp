@@ -17,7 +17,7 @@ namespace scam::crawler
 
     public:
         frontier() noexcept {}
-        frontier(const std::initializer_list<std::string>& il) noexcept
+        frontier(const std::initializer_list<std::string>& il) noexcept;
         virtual ~frontier();
         virtual void add_url(const std::string& url) noexcept;
         virtual std::string get_next();
