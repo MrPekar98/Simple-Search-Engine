@@ -80,6 +80,8 @@ namespace scam::crawler
     {
         if (priority < 0 || priority > this->front_queue.size() + 1)
             throw priority_exception();
+
+        this->front_queue[priority].push(url);
     }
 
     // Checks for frontier being empty.
