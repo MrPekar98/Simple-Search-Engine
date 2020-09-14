@@ -8,5 +8,4 @@ namespace scam::crawler
 {
     // Prototypes.
     void crawl(const std::vector<std::string>& urls, std::vector<document>& result_documents);
-    std::vector<document> crawl(const std::vector<std::string>& urls, unsigned long doc_limit);
 }

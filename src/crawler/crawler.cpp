@@ -38,7 +38,7 @@ namespace scam::crawler
     static std::mutex mtx;
 
     // Prototypes.
-    static void load_seed_set(frontier& f, const std::vector<std::string>& urls);
+    static void load_seed_set(mercator& frontier, const std::vector<std::string>& urls);
     static inline void join_threads(std::vector<std::thread*>& threads);
     static void log_session(CURL* handle);
     static CURL* handle_setup(const std::string& url);
@@ -47,11 +47,12 @@ namespace scam::crawler
     static std::set<std::string> html_shingleterm_set(const std::string& html, unsigned short shingle_length);
     static std::set<std::string> extract_links(const std::string& html);
 
-    // Returns vector of document contents. This function will potentially never terminate.
+    // Returns vector of document contents.
+    // This function will potentially never terminate. Should therefore be called in another thread.
     void crawl(const std::vector<std::string>& urls, std::vector<document>& result_documents)
     {
         // Seeding.
-        frontier url_frontier;
+        mercator url_frontier(4, 3);
         load_seed_set(url_frontier, urls);
 
 #if THREADING
@@ -92,11 +93,11 @@ namespace scam::crawler
     }
 
     // Loads seed set into URL frontier.
-    static void load_seed_set(frontier& f, const std::vector<std::string>& urls)
+    static void load_seed_set(mercator& frontier, const std::vector<std::string>& urls)
     {
         for (int i = 0; i < urls.size(); i++)
         {
-            f.add_url(urls[i]);
+            frontier.add_url(urls[i], i % 4);
         }
     }
 
@@ -220,12 +221,5 @@ namespace scam::crawler
         }
 
         return links;
-    }
-
-    // Returns vector of document contents with limit of collection.
-    std::vector<document> crawl(const std::vector<std::string>& urls, unsigned long doc_limit)
-    {
-        std::vector<document> docs;
-        return docs;
     }
 }
