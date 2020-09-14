@@ -32,10 +32,11 @@ namespace scam::crawler
     private:
         std::vector<std::queue<std::string>> front_queue;
         std::vector<std::queue<std::string>> back_queue;
+        void fill_back_queue(unsigned back_index) noexcept;
 
     public:
-        mercator(unsigned short prio_depth) noexcept;
-        mercator(std::initializer_list<std::pair<std::string, unsigned>>& il, unsigned short prio_depth) throw();
+        mercator(unsigned short prio_depth, unsigned short back_size) noexcept;
+        mercator(std::initializer_list<std::pair<std::string, unsigned>>& il, unsigned short prio_depth, unsigned short back_size) throw();
         void add_url(const std::string& url, unsigned short priority) throw();
         bool empty() const noexcept override;
         std::string get_next() override;

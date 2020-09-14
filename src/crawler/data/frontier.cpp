@@ -76,17 +76,22 @@ namespace scam::crawler
     }
 
     // Mercator constructor.
-    mercator::mercator(unsigned short prio_depth) noexcept
+    mercator::mercator(unsigned short prio_depth, unsigned short back_size) noexcept
     {
         for (int i = 0; i < prio_depth; i++)
         {
             this->front_queue.push_back(std::queue<std::string>());
         }
+
+        for (int i = 0; i < back_size; i++)
+        {
+            this->back_queue.push_back(std::queue<std::string>());
+        }
     }
 
     // Mercator constructor.
-    mercator::mercator(std::initializer_list<std::pair<std::string, unsigned>>& il, unsigned short prio_depth) throw()
-        : mercator(prio_depth)
+    mercator::mercator(std::initializer_list<std::pair<std::string, unsigned>>& il, unsigned short prio_depth, unsigned short back_size) throw()
+        : mercator(prio_depth, back_size)
     {
         for (std::initializer_list<std::pair<std::string, unsigned>>::iterator it = il.begin(); it != il.end(); it++)
         {
@@ -126,10 +131,35 @@ namespace scam::crawler
         return true;
     }
 
-    // Gets next URL from back queue. Fills up a front queue from back queue if empty.
+    // Gets next URL from back queue. Fills up a back queue from front queue if empty.
     std::string mercator::get_next()
     {
-        return "Not implemented";
+        static unsigned index = 0;
+
+        if (this->back_queue[index].empty())
+            fill_back_queue(index);
+
+        std::string next = this->back_queue[index].front();
+        this->back_queue[index].pop();
+        index = (index + 1) % this->back_queue.size();
+        return next;
+    }
+
+    // Fills up back queue from front queue with highest priority.
+    void mercator::fill_back_queue(unsigned back_index) noexcept
+    {
+        unsigned h_index = 0;
+        
+        while (this->front_queue[h_index].empty())
+        {
+            h_index++;
+        }
+
+        while (!this->front_queue[h_index].empty())
+        {
+            this->back_queue[back_index].push(this->front_queue[h_index].front());
+            this->front_queue[h_index].pop();
+        }
     }
 
     // Returns size of mercator.
