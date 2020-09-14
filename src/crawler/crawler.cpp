@@ -1,4 +1,3 @@
-#include <set>
 #include <string.h>
 #include <string>
 #include <thread>
@@ -12,6 +11,9 @@
 #include <iostream>
 #include <functional>
 #include <chrono>
+
+#define PRIORITIES 4
+#define BACK_SZ 3
 
 namespace scam::crawler
 {
@@ -38,21 +40,21 @@ namespace scam::crawler
     static std::mutex mtx;
 
     // Prototypes.
-    static void load_seed_set(mercator& frontier, const std::vector<std::string>& urls);
+    static void load_seed_set(mercator& frontier, const std::set<std::string>& urls);
     static inline void join_threads(std::vector<std::thread*>& threads);
     static void log_session(CURL* handle);
     static CURL* handle_setup(const std::string& url);
-    static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, frontier& urls);
+    static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, mercator& urls);
     static bool analyse_content(const std::string& html_content, const std::vector<document>& documents);
     static std::set<std::string> html_shingleterm_set(const std::string& html, unsigned short shingle_length);
     static std::set<std::string> extract_links(const std::string& html);
 
     // Returns vector of document contents.
     // This function will potentially never terminate. Should therefore be called in another thread.
-    void crawl(const std::vector<std::string>& urls, std::vector<document>& result_documents)
+    void crawl(const std::set<std::string>& urls, std::vector<document>& result_documents)
     {
         // Seeding.
-        mercator url_frontier(4, 3);
+        mercator url_frontier(PRIORITIES, BACK_SZ);
         load_seed_set(url_frontier, urls);
 
 #if THREADING
@@ -93,11 +95,13 @@ namespace scam::crawler
     }
 
     // Loads seed set into URL frontier.
-    static void load_seed_set(mercator& frontier, const std::vector<std::string>& urls)
+    static void load_seed_set(mercator& frontier, const std::set<std::string>& urls)
     {
-        for (int i = 0; i < urls.size(); i++)
+        unsigned i = 0;
+
+        for (std::set<std::string>::iterator it = urls.begin(); it != urls.end(); it++)
         {
-            frontier.add_url(urls[i], i % 4);
+            frontier.add_url(*it, i % PRIORITIES);
         }
     }
 
@@ -145,16 +149,17 @@ namespace scam::crawler
     }
 
     // Handles CURL write.
-    static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, frontier& urls)
+    static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, mercator& urls)
     {
         if (!analyse_content(content, documents))
             return;
 
         std::set<std::string> extracted_links = extract_links(content);
+        unsigned i = 0;
 
         for (std::set<std::string>::iterator it = extracted_links.begin(); it != extracted_links.end(); it++)
         {
-            urls.add_url(*it);
+            urls.add_url(*it, i++ % 4);
         }
 
         documents.push_back(document(host, content));
@@ -166,12 +171,14 @@ namespace scam::crawler
         if (html_shingleterm_set(html_content, SHING_LEN).size() == 0)
             return false;
 
-        for (unsigned i = 0; i < documents.size(); i++)
+        unsigned length = documents.size();
+
+        for (int i = 0; i < length; i++)
         {
             if (html_shingleterm_set(documents[i].content, SHING_LEN).size() == 0)
                 continue;
 
-            if (jaccard(html_shingleterm_set(html_content, SHING_LEN), html_shingleterm_set(documents[i].content, SHING_LEN)) >= JACC_THRES)
+            else if (jaccard(html_shingleterm_set(html_content, SHING_LEN), html_shingleterm_set(documents[i].content, SHING_LEN)) >= JACC_THRES)
                 return false;
         }
 

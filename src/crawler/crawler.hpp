@@ -1,3 +1,4 @@
+#include <set>
 #include <vector>
 #include <string>
 #include "data/document.hpp"
@@ -7,5 +8,5 @@
 namespace scam::crawler
 {
     // Prototypes.
-    void crawl(const std::vector<std::string>& urls, std::vector<document>& result_documents);
+    void crawl(const std::set<std::string>& urls, std::vector<document>& result_documents);
 }
