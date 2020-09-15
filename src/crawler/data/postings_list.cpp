@@ -1,4 +1,5 @@
 #include "postings_list.hpp"
+#include <stdexcept>
 
 namespace scam::crawler::indexing
 {
@@ -30,12 +31,15 @@ namespace scam::crawler::indexing
     // Checks for existence of word in inverted index.
     bool postings_list::word_exists(const std::string& word) const noexcept
     {
-        for (std::map<std::string, std::vector<unsigned>>::iterator it = this->postings.begin(); it != this->postings.end(); it++)
+        try
         {
-            if (word.compare(it->first) == 0)
-                return true;
+            this->postings.at(word);
+            return true;
         }
 
-        return false;
+        catch (const std::out_of_range& exc)
+        {
+            return false;
+        }
     }
 }
