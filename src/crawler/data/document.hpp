@@ -1,3 +1,6 @@
+#ifndef DOCUMENT_HPP
+#define DOCUMENT_HPP
+
 #include <string>
 
 namespace scam::crawler
@@ -10,3 +13,5 @@ namespace scam::crawler
         document(const std::string& url, const std::string& content) noexcept;
     };
 }
+
+#endif
