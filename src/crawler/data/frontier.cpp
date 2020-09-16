@@ -75,6 +75,9 @@ namespace scam::crawler
         return this->urls.size();
     }
 
+    // Mercator non-class member prototypes.
+    static inline unsigned new_back_index(unsigned start_index, const std::vector<std::queue<std::string>>& back_queue);
+
     // Mercator constructor.
     mercator::mercator(unsigned short prio_depth, unsigned short back_size) noexcept
     {
@@ -139,8 +142,11 @@ namespace scam::crawler
         
         static unsigned index = 0;
         
-        if (this->back_queue[index].empty())
+        if (this->back_queue[index].empty() && !front_queue_empty())
             fill_back_queue(index);
+
+        else if (this->back_queue[index].empty() && front_queue_empty())
+            index = new_back_index(index, this->back_queue);
 
         std::string next = this->back_queue[index].front();
         this->back_queue[index].pop();
@@ -151,7 +157,7 @@ namespace scam::crawler
     // Fills up back queue from front queue with highest priority.
     // Must not be called if front queue is entirely empty.
     void mercator::fill_back_queue(unsigned back_index) noexcept
-    {        
+    {
         unsigned h_index = 0;  
         while (this->front_queue[h_index].empty())
         {
@@ -163,6 +169,20 @@ namespace scam::crawler
             this->back_queue[back_index].push(this->front_queue[h_index].front());
             this->front_queue[h_index].pop();
         }
+    }
+
+    // Computes next index in back queue linearly.
+    // Will iterate forever if back queue is empty.
+    static inline unsigned new_back_index(unsigned start_index, const std::vector<std::queue<std::string>>& back_queue)
+    {
+        unsigned start = start_index;
+
+        while (back_queue[start].empty())
+        {
+            start = (start + 1) % back_queue.size();
+        }
+
+        return start;
     }
 
     // Returns size of mercator.
@@ -181,6 +201,20 @@ namespace scam::crawler
         }
 
         return size;
+    }
+
+    // Checks whether the front queue is empty.
+    bool mercator::front_queue_empty() const noexcept
+    {
+        unsigned length = this->front_queue.size();
+
+        for (unsigned i = 0; i < length; i++)
+        {
+            if (!this->front_queue[i].empty())
+                return false;
+        }
+
+        return true;
     }
 
     // Overridden exception class.

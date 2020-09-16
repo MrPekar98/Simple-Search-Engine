@@ -4,7 +4,6 @@
 #include <exception>
 #include <mutex>
 #include <initializer_list>
-#include <utility>
 
 namespace scam::crawler
 {
@@ -33,6 +32,7 @@ namespace scam::crawler
         std::vector<std::queue<std::string>> front_queue;
         std::vector<std::queue<std::string>> back_queue;
         void fill_back_queue(unsigned back_index) noexcept;
+        bool front_queue_empty() const noexcept;
 
     public:
         mercator(unsigned short prio_depth, unsigned short back_size) noexcept;
