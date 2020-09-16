@@ -4,5 +4,5 @@
 #define THREAD_COUNT 6
 
 // HMLT parsing.
-#define PARSE_HTML 0
+#define PARSE_HTML 1
 #define TITLE_ONLY 1
