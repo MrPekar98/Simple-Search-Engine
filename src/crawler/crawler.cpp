@@ -45,8 +45,8 @@ namespace scam::crawler
     static void log_session(CURL* handle);
     static CURL* handle_setup(const std::string& url);
     static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, mercator& urls);
+    static std::string parse_content(const std::string& content);
     static bool analyse_content(const std::string& html_content, const std::vector<document>& documents);
-    static std::set<std::string> html_shingleterm_set(const std::string& html, unsigned short shingle_length);
     static std::set<std::string> extract_links(const std::string& html);
 
     // Returns vector of document contents.
@@ -82,7 +82,6 @@ namespace scam::crawler
 #if DEBUG
                     log_session(handle);
 #endif
-
                     curl_handle_write(result_documents, url, buffer, url_frontier);
                     curl_easy_cleanup(handle);
                 }
@@ -165,50 +164,50 @@ namespace scam::crawler
         documents.push_back(document(host, content));
     }
 
-    // Analyses contents using shingles. Returns false is the content does not pass the threshold.
-    static bool analyse_content(const std::string& html_content, const std::vector<document>& documents)
-    {
-        if (html_shingleterm_set(html_content, SHING_LEN).size() == 0)
-            return false;
-
-        unsigned length = documents.size();
-
-        for (int i = 0; i < length; i++)
-        {
-            if (html_shingleterm_set(documents[i].content, SHING_LEN).size() == 0)
-                continue;
-
-            else if (jaccard(html_shingleterm_set(html_content, SHING_LEN), html_shingleterm_set(documents[i].content, SHING_LEN)) >= JACC_THRES)
-                return false;
-        }
-
-        return true;
-    }
-
-    // Converts HTML content into set instance of terms.
-    static std::set<std::string> html_shingleterm_set(const std::string& html, unsigned short shingle_length)
+    // Parses HTML.
+    static std::string parse_content(const std::string& content)
     {
 #if PARSE_HTML
         std::string error_msg;
         CWNode tree;
         std::set<std::string> shingle_set;
 
-        // TODO: This is unfortunately true.
-        if (!tree.ParseHTML(html, &error_msg))
-            return shingle_set;
+        if (!tree.ParseHTML(content, &error_msg))
+            return "";
 
-        CWNode* body = tree.FindChildByName("body", false, true);
-
-        if (!body)
-            return shingle_set;
-
-        std::string body_text = body->GetText();
-        delete body;
-
-        return shingles(body_text, shingle_length);
+#if TITLE_ONLY
+        CWNode* node = tree.FindChildByName("title", false, true);
 #else
-        return shingles(html, shingle_length);
+        CWNode* node = tree.FindChildByName("body", false, true);
 #endif
+
+        if (!node)
+            return "";
+
+        return node->GetText();
+#else
+        return content;
+#endif
+    }
+
+    // Analyses contents using shingles. Returns false is the content does not pass the threshold.
+    static bool analyse_content(const std::string& html_content, const std::vector<document>& documents)
+    {
+        if (shingles(parse_content(html_content), SHING_LEN).size() == 0)
+            return false;
+
+        unsigned length = documents.size();
+
+        for (int i = 0; i < length; i++)
+        {
+            if (shingles(parse_content(html_content), SHING_LEN).size() == 0)
+                continue;
+
+            else if (jaccard(shingles(parse_content(html_content), SHING_LEN), shingles(parse_content(html_content), SHING_LEN)) >= JACC_THRES)
+                return false;
+        }
+
+        return true;
     }
 
     // Extracts hyperlinks from HTML content.
