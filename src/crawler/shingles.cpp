@@ -1,8 +1,6 @@
 #include "shingles.hpp"
 #include <vector>
 
-#include <iostream>
-
 namespace scam::crawler
 {
     // Prototypes.
