@@ -1,6 +1,8 @@
 #include "shingles.hpp"
 #include <vector>
 
+#include <iostream>
+
 namespace scam::crawler
 {
     // Prototypes.
@@ -46,13 +48,16 @@ namespace scam::crawler
         std::set<std::string> shingles;
         std::vector<std::string> terms = str_terms(str);
 
-        for (unsigned i = 0; i < terms.size() / shingle_count; i++)
+        for (unsigned i = 0; i < terms.size(); i++)
         {
             std::string shingle = "";
 
             for (unsigned j = 0; j < shingle_count; j++)
             {
-                shingle += terms[i * shingle_count + j];
+                if (j == terms.size())
+                    break;
+
+                shingle += terms[i + j];
                 shingle += ' ';
             }
 
