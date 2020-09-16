@@ -134,8 +134,11 @@ namespace scam::crawler
     // Gets next URL from back queue. Fills up a back queue from front queue if empty.
     std::string mercator::get_next()
     {
+        if (empty())
+            return "";
+        
         static unsigned index = 0;
-
+        
         if (this->back_queue[index].empty())
             fill_back_queue(index);
 
@@ -146,10 +149,10 @@ namespace scam::crawler
     }
 
     // Fills up back queue from front queue with highest priority.
+    // Must not be called if front queue is entirely empty.
     void mercator::fill_back_queue(unsigned back_index) noexcept
-    {
-        unsigned h_index = 0;
-        
+    {        
+        unsigned h_index = 0;  
         while (this->front_queue[h_index].empty())
         {
             h_index++;
