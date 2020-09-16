@@ -100,7 +100,7 @@ namespace scam::crawler
 
         for (std::set<std::string>::iterator it = urls.begin(); it != urls.end(); it++)
         {
-            frontier.add_url(*it, i % PRIORITIES);
+            frontier.add_url(*it, i++ % PRIORITIES);
         }
     }
 
@@ -170,7 +170,6 @@ namespace scam::crawler
 #if PARSE_HTML
         std::string error_msg;
         CWNode tree;
-        std::set<std::string> shingle_set;
 
         if (!tree.ParseHTML(content, &error_msg))
             return "";
