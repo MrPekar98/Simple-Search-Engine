@@ -5,3 +5,4 @@
 
 // HMLT parsing.
 #define PARSE_HTML 0
+#define TITLE_ONLY 1
