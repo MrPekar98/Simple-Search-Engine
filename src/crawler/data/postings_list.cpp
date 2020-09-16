@@ -1,5 +1,6 @@
 #include "postings_list.hpp"
 #include <stdexcept>
+#include <thread>
 
 namespace scam::crawler::indexing
 {
@@ -13,7 +14,6 @@ namespace scam::crawler::indexing
     // Builds inverted index.
     void postings_list::build_postings() noexcept
     {
-        this->building = true;
         unsigned length = this->docs.size();
 
         for (unsigned i = 0; i < length; i++)
@@ -28,8 +28,6 @@ namespace scam::crawler::indexing
                 this->postings[*it].push_back(this->docs[i].id);
             }
         }
-
-        this->building = false;
     }
 
     // Updates inverted index.
@@ -47,10 +45,9 @@ namespace scam::crawler::indexing
     }
 
     // Searches inverted index by given query. Returns ranked list of URLS.
-    // Must wait till building is done.
     /*std::vector<std::string> postings_list::search(const std::string& query) const noexcept
     {
-        while (this->building);
+
     }*/
 
     // Checks for existence of word in inverted index.
