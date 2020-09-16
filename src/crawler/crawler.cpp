@@ -161,7 +161,7 @@ namespace scam::crawler
             urls.add_url(*it, i++ % 4);
         }
 
-        documents.push_back(document(host, content));
+        documents.push_back(document(host, parse_content(content)));
     }
 
     // Parses HTML.
