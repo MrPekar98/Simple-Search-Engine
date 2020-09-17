@@ -192,19 +192,19 @@ namespace scam::crawler
     }
 
     // Analyses contents using shingles. Returns false is the content does not pass the threshold.
-    static bool analyse_content(const std::string& html_content, const std::vector<document>& documents)
+    static bool analyse_content(const std::string& content, const std::vector<document>& documents)
     {
-        if (shingles(parse_content(html_content), SHING_LEN).size() == 0)
+        if (shingles(content, SHING_LEN).size() == 0)
             return false;
 
         unsigned length = documents.size();
 
         for (int i = 0; i < length; i++)
         {
-            if (shingles(parse_content(html_content), SHING_LEN).size() == 0)
+            if (shingles(content, SHING_LEN).size() == 0)
                 continue;
 
-            else if (jaccard(shingles(parse_content(html_content), SHING_LEN), shingles(parse_content(html_content), SHING_LEN)) >= JACC_THRES)
+            else if (jaccard(shingles(content, SHING_LEN), shingles(documents[i].content, SHING_LEN)) >= JACC_THRES)
                 return false;
         }
 
