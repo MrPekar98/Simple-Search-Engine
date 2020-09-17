@@ -52,7 +52,7 @@ namespace scam::crawler
 
             for (unsigned j = 0; j < shingle_count; j++)
             {
-                if (j == terms.size())
+                if (i + j == terms.size())
                     break;
 
                 shingle += terms[i + j];
