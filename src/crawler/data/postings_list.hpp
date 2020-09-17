@@ -4,7 +4,7 @@
 #include <set>
 #include "document.hpp"
 
-namespace scam::crawler::indexing
+namespace scam::indexing
 {
     class postings_list
     {

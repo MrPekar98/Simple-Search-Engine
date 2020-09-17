@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <thread>
 
-namespace scam::crawler::indexing
+namespace scam::indexing
 {
     // Constructor.
     postings_list::postings_list(const std::vector<document>& docs) noexcept
