@@ -5,7 +5,7 @@
 namespace scam::indexing
 {
     // Constructor.
-    postings_list::postings_list(const std::vector<document>& docs) noexcept
+    postings_list::postings_list(const std::vector<scam::crawler::document>& docs) noexcept
         : docs(docs)
     {
         build_postings();
@@ -31,7 +31,7 @@ namespace scam::indexing
     }
 
     // Updates inverted index.
-    void postings_list::reload(const std::vector<document>& docs) noexcept
+    void postings_list::reload(const std::vector<scam::crawler::document>& docs) noexcept
     {
         this->docs.clear();
         unsigned length = docs.size();
