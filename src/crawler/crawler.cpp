@@ -150,8 +150,10 @@ namespace scam::crawler
     // Handles CURL write.
     static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, mercator& urls)
     {
+#if FP_CHECK
         if (!analyse_content(content, documents))
             return;
+#endif
 
         std::set<std::string> extracted_links = extract_links(content);
         unsigned i = 0;
