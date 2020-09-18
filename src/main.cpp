@@ -25,11 +25,12 @@ int main(int argc, char** argv)
     urls.insert("https://www.google.com/search?sxsrf=ALeKk00kyTsMg9r18A7slpJeu7DVDMBXyA%3A1599833049416&ei=2YNbX_n1GJGzsAflz6GYDw&q=Kristian+Gregersen&oq=Kristian+Gregersen&gs_lcp=CgZwc3ktYWIQAzICCAAyBggAEBYQHjIGCAAQFhAeMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB46BAgjECc6BQgAEMsBOgcIABAKEMsBOgcIIxDqAhAnOgcILhDqAhAnOgUIABCxAzoFCC4QsQM6CAgAELEDEIMBOgQIABAKOgIILjoECC4QCjoHCC4QChCTAjoFCC4QkwI6BQguEMsBOgQIABANOgYIABANEB46CAgAEA0QBRAeOggIABAIEA0QHlDtb1jfrQFgxK8BaAdwAHgAgAFwiAHSEZIBBDIzLjOYAQCgAQGqAQdnd3Mtd2l6sAEKwAEB&sclient=psy-ab&ved=0ahUKEwi5xvDEouHrAhWRGewKHeVnCPMQ4dUDCA0&uact=5");
     urls.insert("https://www.google.com/search?sxsrf=ALeKk03MGwUi-P4TH493wyO_jzeZLkX-8g%3A1599833091588&ei=A4RbX6WxI4bmsAfw5o6gCA&q=Martin+pekar+Christensen&oq=Martin+pekar+Christensen&gs_lcp=CgZwc3ktYWIQAzoECCMQJzoECC4QQzoECAAQQzoKCC4QsQMQgwEQQzoFCAAQsQM6BQguELEDOgIIADoICC4QsQMQgwE6BQguEJMCOgIILjoECAAQCjoFCAAQywE6BwguEAoQywE6BggAEBYQHjoFCCEQoAE6BwghEAoQoAFQ82FY5Xpg6HxoAXAAeACAAbgBiAGWFJIBBDIxLjWYAQCgAQGqAQdnd3Mtd2l6wAEB&sclient=psy-ab&ved=0ahUKEwjlvv7YouHrAhUGM-wKHXCzA4QQ4dUDCA0&uact=5");
 
-    std::thread([&urls, &docs](){
+    std::thread crawling_thread([&urls, &docs](){
         scam::crawler::crawl(urls, docs);
+        std::cout << "Crawling terminated." << std::endl;
     });
 
-    std::thread([&list, &docs](){
+    std::thread indexing_thread([&list, &docs](){
         while (true)
         {
             std::this_thread::sleep_for(std::chrono::seconds(INDEX_UPDATE_TIME));
@@ -48,6 +49,9 @@ int main(int argc, char** argv)
 
         std::cout << std::endl;
     }
+
+    crawling_thread.join();
+    indexing_thread.join();
 
     return 0;
 }
