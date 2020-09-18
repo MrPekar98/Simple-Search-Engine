@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 
     std::thread crawling_thread([&urls, &docs](){
         scam::crawler::crawl(urls, docs);
-        std::cout << "Crawling terminated." << std::endl;
+        std::cout << "Crawling has terminated." << std::endl;
     });
 
     std::thread indexing_thread([&list, &docs](){
