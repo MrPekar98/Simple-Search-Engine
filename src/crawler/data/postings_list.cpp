@@ -2,9 +2,13 @@
 #include "../../indexing/term.hpp"
 #include <stdexcept>
 #include <thread>
+#include <stdexcept>
 
 namespace scam::indexing
 {
+    // Prototypes.
+    static inline bool has_document(unsigned id, const std::vector<scam::crawler::document>& docs);
+
     // Constructor.
     postings_list::postings_list(const std::vector<scam::crawler::document>& docs) noexcept
         : docs(docs)
@@ -52,11 +56,64 @@ namespace scam::indexing
         build_postings();
     }
 
-    // Searches inverted index by given query. Returns ranked list of URLS.
-    /*std::vector<std::string> postings_list::search(const std::string& query) const noexcept
+    // Searches inverted index by given query.
+    std::vector<scam::crawler::document> postings_list::search(const std::string& query) const noexcept
     {
+        std::set<std::string> query_terms = terms(query);
+        std::vector<scam::crawler::document> docs;
 
-    }*/
+        for (std::set<std::string>::iterator it = query_terms.begin(); it != query_terms.end(); it++)
+        {
+            try
+            {
+                std::vector<unsigned> doc_ids = this->postings.at(*it);
+                unsigned length = doc_ids.size();
+
+                for (unsigned i = 0; i < length; i++)
+                {
+                    scam::crawler::document doc = find_document(doc_ids[i]);
+
+                    if (!has_document(doc_ids[i], docs))
+                        docs.push_back(doc);
+                }
+            }
+
+            catch (const std::out_of_range& exc)
+            {
+                // Just continue;
+            }
+        }
+
+        return docs;
+    }
+
+    // Checks vector of documents for document existence.
+    static inline bool has_document(unsigned id, const std::vector<scam::crawler::document>& docs)
+    {
+        unsigned length = docs.size();
+
+        for (unsigned i = 0; i < length; i++)
+        {
+            if (id == docs[i].id)
+                return true;
+        }
+
+        return false;
+    }
+
+    // Finds document with given ID.
+    scam::crawler::document postings_list::find_document(unsigned id) const throw()
+    {
+        unsigned length = this->docs.size();
+
+        for (unsigned i = 0; i < length; i++)
+        {
+            if (id == this->docs[i].id)
+                return this->docs[i];
+        }
+
+        throw std::out_of_range("ID mismatch");
+    }
 
     // Checks for existence of word in inverted index.
     bool postings_list::word_exists(const std::string& word) const noexcept
