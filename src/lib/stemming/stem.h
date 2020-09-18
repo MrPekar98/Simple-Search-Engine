@@ -285,7 +285,7 @@ static void step5()
    file.
 */
 
-int stem(char * p, int i, int j)
+int stemming(char * p, int i, int j)
 {  b = p; k = j; k0 = i; /* copy the parameters into statics */
    if (k <= k0+1) return k; /*-DEPARTURE-*/
 
