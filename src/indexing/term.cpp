@@ -46,7 +46,6 @@ namespace scam::indexing
     // Check string for being a stop word.
     bool term::is_stop_word() const noexcept
     {
-        //char* line = new char[20];
         std::string line;
         std::ifstream stream(STOP_WORDS);
 
