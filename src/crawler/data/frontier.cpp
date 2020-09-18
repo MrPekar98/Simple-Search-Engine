@@ -81,6 +81,8 @@ namespace scam::crawler
     // Mercator constructor.
     mercator::mercator(unsigned short prio_depth, unsigned short back_size) noexcept
     {
+        this->mtx.lock();
+        
         for (int i = 0; i < prio_depth; i++)
         {
             this->front_queue.push_back(std::queue<std::string>());
@@ -90,28 +92,43 @@ namespace scam::crawler
         {
             this->back_queue.push_back(std::queue<std::string>());
         }
+
+        this->mtx.unlock();
     }
 
     // Mercator constructor.
     mercator::mercator(std::initializer_list<std::pair<std::string, unsigned>>& il, unsigned short prio_depth, unsigned short back_size) throw()
         : mercator(prio_depth, back_size)
     {
+        this->mtx.lock();
+        
         for (std::initializer_list<std::pair<std::string, unsigned>>::iterator it = il.begin(); it != il.end(); it++)
         {
             if (it->second < 0 || it->second >= this->front_queue.size())
+            {
+                this->mtx.unlock();
                 throw priority_exception();
+            }
 
             this->front_queue[it->second].push(it->first);
         }
+
+        this->mtx.unlock();
     }
 
     // Add url into front queue.
     void mercator::add_url(const std::string& url, unsigned short priority) throw()
     {
+        this->mtx.lock();
+        
         if (priority < 0 || priority >= this->front_queue.size())
+        {
+            this->mtx.unlock();
             throw priority_exception();
+        }
 
         this->front_queue[priority].push(url);
+        this->mtx.unlock();
     }
 
     // Checks for frontier being empty.
@@ -140,6 +157,7 @@ namespace scam::crawler
         if (empty())
             return "";
         
+        this->mtx.lock();
         static unsigned index = 0;
         
         if (this->back_queue[index].empty() && !front_queue_empty())
@@ -151,6 +169,8 @@ namespace scam::crawler
         std::string next = this->back_queue[index].front();
         this->back_queue[index].pop();
         index = (index + 1) % this->back_queue.size();
+        this->mtx.unlock();
+
         return next;
     }
 
