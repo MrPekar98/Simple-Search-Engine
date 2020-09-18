@@ -15,6 +15,7 @@ namespace scam::indexing
         void build_postings() noexcept;
         bool word_exists(const std::string& word) const noexcept;
         static std::set<std::string> terms(const std::string& str) noexcept;
+        scam::crawler::document find_document(unsigned id) const throw();
 
     public:
         postings_list(const std::vector<scam::crawler::document>& docs) noexcept;
