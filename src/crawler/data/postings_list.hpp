@@ -19,6 +19,6 @@ namespace scam::indexing
     public:
         postings_list(const std::vector<scam::crawler::document>& docs) noexcept;
         void reload(const std::vector<scam::crawler::document>& docs) noexcept;
-        std::vector<std::string> search(const std::string& query) const noexcept;
+        std::vector<scam::crawler::document> search(const std::string& query) const noexcept;
     };
 }
