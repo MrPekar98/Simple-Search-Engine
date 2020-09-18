@@ -1,6 +1,7 @@
 #include "term.hpp"
 #include <fstream>
 #include <string.h>
+#include <ctype.h>
 
 #define STOP_WORDS "indexing/stop_word.txt"
 
@@ -8,8 +9,14 @@ namespace scam::indexing
 {
     // Term constructor.
     term::term(const std::string& str) noexcept
+        : str(str)
     {
-        //std::transform(str.begin(), str.end(), str.begin(), tolower);
+        unsigned length = this->str.length();
+
+        for (unsigned i = 0; i < length; i++)
+        {
+            this->str[i] = tolower(this->str[i]);
+        }
     }
 
     // Getter to string.
