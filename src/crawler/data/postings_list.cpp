@@ -1,4 +1,5 @@
 #include "postings_list.hpp"
+#include "../../indexing/term.hpp"
 #include <stdexcept>
 #include <thread>
 
@@ -22,10 +23,17 @@ namespace scam::indexing
 
             for (std::set<std::string>::iterator it = ts.begin(); it != ts.end(); it++)
             {
-                if (!word_exists(*it))
-                    this->postings[*it] = std::vector<unsigned>();
+                scam::indexing::term t = scam::indexing::term(*it).tokenize().stem().normalize();
+
+                if (t.is_stop_word())
+                    continue;
+
+                std::string term_str = t.get_str();
                 
-                this->postings[*it].push_back(this->docs[i].id);
+                if (!word_exists(term_str))
+                    this->postings[term_str] = std::vector<unsigned>();
+                
+                this->postings[term_str].push_back(this->docs[i].id);
             }
         }
     }
