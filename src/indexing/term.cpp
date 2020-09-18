@@ -1,7 +1,6 @@
 #include "term.hpp"
 #include <fstream>
 #include <string.h>
-#include <stem.h>
 
 #define STOP_WORDS "indexing/stop_word.txt"
 
@@ -34,13 +33,6 @@ namespace scam::indexing
     // Uses Porter's algorithm to stem string.
     term& term::stem() noexcept
     {
-        char* char_str = new char[this->str.length()];
-        memcpy(char_str, this->str.c_str(), this->str.length());
-
-        unsigned end_index = ::stem(char_str, 0, this->str.length());
-        char_str[end_index] = '\0';
-        this->str = char_str;
-
         return *this;
     }
 
