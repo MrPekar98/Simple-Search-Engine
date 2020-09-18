@@ -12,14 +12,14 @@ namespace scam::indexing
         std::map<std::string, std::vector<unsigned>> postings;
         std::vector<scam::crawler::document> docs;
         bool building = false;
-        void build_postings() noexcept;
+        void build_postings(unsigned from = 0) noexcept;
         bool word_exists(const std::string& word) const noexcept;
         static std::set<std::string> terms(const std::string& str) noexcept;
         scam::crawler::document find_document(unsigned id) const throw();
 
     public:
         postings_list(const std::vector<scam::crawler::document>& docs) noexcept;
-        void reload(const std::vector<scam::crawler::document>& docs) noexcept;
+        void reload(const std::vector<scam::crawler::document>& docs, unsigned from = 0) noexcept;
         std::vector<scam::crawler::document> search(const std::string& query) const noexcept;
     };
 }

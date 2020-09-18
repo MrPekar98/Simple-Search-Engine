@@ -17,11 +17,11 @@ namespace scam::indexing
     }
 
     // Builds inverted index.
-    void postings_list::build_postings() noexcept
+    void postings_list::build_postings(unsigned from = 0) noexcept
     {
         unsigned length = this->docs.size();
 
-        for (unsigned i = 0; i < length; i++)
+        for (unsigned i = from; i < length; i++)
         {
             std::set<std::string> ts = postings_list::terms(this->docs[i].content);
 
@@ -43,17 +43,17 @@ namespace scam::indexing
     }
 
     // Updates inverted index.
-    void postings_list::reload(const std::vector<scam::crawler::document>& docs) noexcept
+    void postings_list::reload(const std::vector<scam::crawler::document>& docs, unsigned from = 0) noexcept
     {
         this->docs.clear();
         unsigned length = docs.size();
 
-        for (unsigned i = 0; i < length; i++)
+        for (unsigned i = from; i < length; i++)
         {
             this->docs.push_back(docs[i]);
         }
 
-        build_postings();
+        build_postings(from);
     }
 
     // Searches inverted index by given query.
