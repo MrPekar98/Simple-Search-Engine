@@ -1,3 +1,11 @@
+#ifndef STEM_H
+#define STEM_H
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <string.h>  /* for memmove */
 
 #define TRUE 1
@@ -292,3 +300,9 @@ int stem(char * p, int i, int j)
    }
    return k;
 }
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
