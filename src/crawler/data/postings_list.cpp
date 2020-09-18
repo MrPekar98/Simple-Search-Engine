@@ -27,7 +27,7 @@ namespace scam::indexing
 
             for (std::set<std::string>::iterator it = ts.begin(); it != ts.end(); it++)
             {
-                scam::indexing::term t = scam::indexing::term(*it).tokenize().stem().normalize();
+                scam::indexing::term t = scam::indexing::term(*it);
 
                 if (t.is_stop_word())
                     continue;
@@ -130,9 +130,9 @@ namespace scam::indexing
         }
     }
 
-    // TODO: Add functions to manipulate each term.
     // Returns set of terms.
-    // Stop words are removed, normalization, and stemming.
+    // Normalization, and stemming.
+    // Stop word are not removed here.
     std::set<std::string> postings_list::terms(const std::string& str) noexcept
     {
         std::set<std::string> terms;
@@ -143,14 +143,14 @@ namespace scam::indexing
         {
             if (str[i] == ' ')
             {
-                terms.insert(temp);
+                terms.insert(scam::indexing::term(temp).tokenize().stem().normalize().get_str());
                 temp = "";
             }
 
             else if (i == length - 1)
             {
                 temp += str[i];
-                terms.insert(temp);
+                terms.insert(scam::indexing::term(temp).tokenize().stem().normalize().get_str());
             }
 
             else
