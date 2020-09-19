@@ -31,13 +31,10 @@ int main(int argc, char** argv)
     });
 
     std::thread indexing_thread([&list, &docs](){
-        unsigned docs_length = 0;
-
         while (true)
         {
             std::this_thread::sleep_for(std::chrono::seconds(INDEX_UPDATE_TIME));
             list.reload(docs);
-            docs_length = docs.size();
         }
     });
 
