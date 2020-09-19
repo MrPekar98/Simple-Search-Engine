@@ -17,11 +17,11 @@ namespace scam::indexing
     }
 
     // Builds inverted index.
-    void postings_list::build_postings(unsigned from) noexcept
+    void postings_list::build_postings(unsigned from_docs_index) noexcept
     {
         unsigned length = this->docs.size();
 
-        for (unsigned i = from; i < length; i++)
+        for (unsigned i = from_docs_index; i < length; i++)
         {
             std::set<std::string> ts = postings_list::terms(this->docs[i].content);
 
@@ -35,25 +35,25 @@ namespace scam::indexing
                 std::string term_str = t.get_str();
                 
                 if (!word_exists(term_str))
-                    this->postings[term_str] = std::vector<unsigned>();
+                    this->postings[term_str] = std::set<unsigned>();
                 
-                this->postings[term_str].push_back(this->docs[i].id);
+                this->postings[term_str].insert(this->docs[i].id);
             }
         }
     }
 
     // Updates inverted index.
-    void postings_list::reload(const std::vector<scam::crawler::document>& docs, unsigned from) noexcept
+    void postings_list::reload(const std::vector<scam::crawler::document>& docs) noexcept
     {
-        this->docs.clear();
         unsigned length = docs.size();
 
-        for (unsigned i = from; i < length; i++)
+        for (unsigned i = 0; i < length; i++)
         {
-            this->docs.push_back(docs[i]);
+            if (!has_document(docs[i].id, this->docs))
+                this->docs.push_back(docs[i]);
         }
 
-        build_postings(from);
+        build_postings();
     }
 
     // Searches inverted index by given query.
@@ -62,18 +62,18 @@ namespace scam::indexing
         std::set<std::string> query_terms = terms(query);
         std::vector<scam::crawler::document> docs;
 
-        for (std::set<std::string>::iterator it = query_terms.begin(); it != query_terms.end(); it++)
+        for (std::set<std::string>::iterator query_it = query_terms.begin(); query_it != query_terms.end(); query_it++)
         {
             try
             {
-                std::vector<unsigned> doc_ids = this->postings.at(*it);
+                std::set<unsigned> doc_ids = this->postings.at(*query_it);
                 unsigned length = doc_ids.size();
 
-                for (unsigned i = 0; i < length; i++)
+                for (std::set<unsigned>::iterator id_it = doc_ids.begin(); id_it != doc_ids.end(); id_it++)
                 {
-                    scam::crawler::document doc = find_document(doc_ids[i]);
+                    scam::crawler::document doc = find_document(*id_it);
 
-                    if (!has_document(doc_ids[i], docs))
+                    if (!has_document(*id_it, docs))
                         docs.push_back(doc);
                 }
             }
