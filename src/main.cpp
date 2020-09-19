@@ -36,7 +36,7 @@ int main(int argc, char** argv)
         while (true)
         {
             std::this_thread::sleep_for(std::chrono::seconds(INDEX_UPDATE_TIME));
-            list.reload(docs, docs_length);
+            list.reload(docs);
             docs_length = docs.size();
         }
     });
