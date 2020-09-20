@@ -14,6 +14,7 @@ namespace scam::crawler
     protected:
         std::mutex mtx;
         std::queue<std::string> urls;
+        std::set<std::string> seen_urls;
         virtual bool url_exists(const std::string& url) noexcept;
 
     public:

@@ -18,20 +18,13 @@ namespace scam::crawler
     // Checks whether URL already exists in queue.
     bool frontier::url_exists(const std::string& url) noexcept
     {
-        bool ret = false;
-
-        for (int i = 0; i < this->urls.size(); i++)
+        for (std::set<std::string>::iterator it = this->seen_urls.begin(); it != this->seen_urls.end(); it++)
         {
-            std::string temp = this->urls.front();
-
-            if (temp.compare(url) == 0)
-                ret = true;
-
-            this->urls.pop();
-            this->urls.push(temp);
+            if (url.compare(*it) == 0)
+                return true;
         }
 
-        return ret;
+        return false;
     }
 
     // Adds URL if not already added.
@@ -39,8 +32,11 @@ namespace scam::crawler
     {
         this->mtx.lock();
 
-        if (this->urls.empty() || !url_exists(url))
+        if (!url_exists(url))
+        {
+            this->seen_urls.insert(url);
             this->urls.push(url);
+        }
 
         this->mtx.unlock();
     }
