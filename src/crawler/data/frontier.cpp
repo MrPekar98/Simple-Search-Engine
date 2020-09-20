@@ -127,7 +127,12 @@ namespace scam::crawler
             throw priority_exception();
         }
 
-        this->front_queue[priority].push(url);
+        if (!url_seen(url))
+        {
+            this->urls.insert(url);
+            this->front_queue[priority].push(url);
+        }
+
         this->mtx.unlock();
     }
 
@@ -235,6 +240,18 @@ namespace scam::crawler
         }
 
         return true;
+    }
+
+    // Checks if URL has been in mercator aldready.
+    bool mercator::url_seen(const std::string& url) const noexcept
+    {
+        for (std::set<std::string>::iterator it = this->urls.begin(); it != this->urls.end(); it++)
+        {
+            if (url.compare(*it) == 0)
+                return true;
+        }
+
+        return false;
     }
 
     // Overridden exception class.

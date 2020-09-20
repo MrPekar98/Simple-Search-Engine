@@ -1,6 +1,7 @@
 #include <queue>
 #include <string>
 #include <vector>
+#include <set>
 #include <exception>
 #include <mutex>
 #include <initializer_list>
@@ -31,8 +32,10 @@ namespace scam::crawler
     private:
         std::vector<std::queue<std::string>> front_queue;
         std::vector<std::queue<std::string>> back_queue;
+        std::set<std::string> urls;
         void fill_back_queue(unsigned back_index) noexcept;
         bool front_queue_empty() const noexcept;
+        bool url_seen(const std::string& url) const noexcept;
 
     public:
         mercator(unsigned short prio_depth, unsigned short back_size) noexcept;
