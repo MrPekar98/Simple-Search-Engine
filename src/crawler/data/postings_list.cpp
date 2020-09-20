@@ -4,9 +4,6 @@
 #include <thread>
 #include <stdexcept>
 
-// Must be deleted.
-#include <iostream>
-
 namespace scam::indexing
 {
     // Prototypes.
@@ -53,8 +50,6 @@ namespace scam::indexing
 
         for (unsigned i = 0; i < length; i++)
         {
-            std::cout << docs[i].content << std::endl;
-            
             if (!has_document(docs[i].id, this->docs))
                 this->docs.push_back(docs[i]);
         }
