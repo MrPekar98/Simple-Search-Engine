@@ -4,6 +4,9 @@
 #include <thread>
 #include <stdexcept>
 
+// Must be deleted.
+#include <iostream>
+
 namespace scam::indexing
 {
     // Prototypes.
@@ -46,14 +49,17 @@ namespace scam::indexing
     void postings_list::reload(const std::vector<scam::crawler::document>& docs) noexcept
     {
         unsigned length = docs.size();
+        unsigned build_start = this->docs.size();
 
         for (unsigned i = 0; i < length; i++)
         {
+            std::cout << docs[i].content << std::endl;
+            
             if (!has_document(docs[i].id, this->docs))
                 this->docs.push_back(docs[i]);
         }
 
-        build_postings();
+        build_postings(build_start);
     }
 
     // Searches inverted index by given query.
