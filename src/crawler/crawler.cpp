@@ -15,6 +15,12 @@
 #define PRIORITIES 4
 #define BACK_SZ 3
 
+#if SIMPLE_FRONTIER
+#define FRONTIER frontier
+#else
+#define FRONTIER mercator
+#endif
+
 namespace scam::crawler
 {
     // CURL callbacks must be static member of a class.
@@ -40,11 +46,11 @@ namespace scam::crawler
     static std::mutex mtx;
 
     // Prototypes.
-    static void load_seed_set(mercator& frontier, const std::set<std::string>& urls);
+    static void load_seed_set(FRONTIER& frontier, const std::set<std::string>& urls);
     static inline void join_threads(std::vector<std::thread*>& threads);
     static void log_session(CURL* handle);
     static CURL* handle_setup(const std::string& url);
-    static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, mercator& urls);
+    static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, FRONTIER& urls);
     static std::string parse_content(const std::string& content);
     static bool analyse_content(const std::string& html_content, const std::vector<document>& documents);
     static std::set<std::string> extract_links(const std::string& html);
@@ -54,7 +60,11 @@ namespace scam::crawler
     void crawl(const std::set<std::string>& urls, std::vector<document>& result_documents)
     {
         // Seeding.
-        mercator url_frontier(PRIORITIES, BACK_SZ);
+#if SIMPLE_FRONTIER
+        FRONTIER url_frontier;
+#else
+        FRONTIER url_frontier(PRIORITIES, BACK_SZ);
+#endif
         load_seed_set(url_frontier, urls);
 
 #if THREADING
@@ -94,13 +104,17 @@ namespace scam::crawler
     }
 
     // Loads seed set into URL frontier.
-    static void load_seed_set(mercator& frontier, const std::set<std::string>& urls)
+    static void load_seed_set(FRONTIER& frontier, const std::set<std::string>& urls)
     {
         unsigned i = 0;
 
         for (std::set<std::string>::iterator it = urls.begin(); it != urls.end(); it++)
         {
+#if SIMPLE_FRONTIER
+            frontier.add_url(*it);
+#else
             frontier.add_url(*it, i++ % PRIORITIES);
+#endif
         }
     }
 
@@ -148,7 +162,7 @@ namespace scam::crawler
     }
 
     // Handles CURL write.
-    static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, mercator& urls)
+    static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, FRONTIER& urls)
     {
 #if FP_CHECK
         if (!analyse_content(content, documents))
@@ -160,7 +174,11 @@ namespace scam::crawler
 
         for (std::set<std::string>::iterator it = extracted_links.begin(); it != extracted_links.end(); it++)
         {
+#if SIMPLE_FRONTIER
+            urls.add_url(*it);
+#else
             urls.add_url(*it, i++ % 4);
+#endif
         }
 
         documents.push_back(document(host, parse_content(content)));
