@@ -1,8 +1,6 @@
 #include <assert.h>
 #include "../crawler/data/frontier.hpp"
 
-#include <iostream>
-
 // Prototypes.
 void test_empty_simple();
 void test_get_next_simple();
