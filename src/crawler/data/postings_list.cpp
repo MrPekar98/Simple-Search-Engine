@@ -1,14 +1,18 @@
 #include "postings_list.hpp"
+#include "pair.hpp"
 #include "../../indexing/term.hpp"
 #include <stdexcept>
 #include <thread>
 #include <stdexcept>
+#include <utility>
+#include <algorithm>
 
 namespace scam::indexing
 {
     // Prototypes.
     static inline bool has_document(unsigned id, const std::vector<scam::crawler::document>& docs);
-
+    static std::vector<scam::crawler::document> convert_to_documents(const std::vector<scam::crawler::pair<unsigned, scam::crawler::document>> docs);
+    
     // Constructor.
     postings_list::postings_list(const std::vector<scam::crawler::document>& docs) noexcept
         : docs(docs)
@@ -85,7 +89,7 @@ namespace scam::indexing
             }
         }
 
-        return docs;
+        return rank_documents(query_terms, docs);
     }
 
     // Checks vector of documents for document existence.
@@ -114,6 +118,65 @@ namespace scam::indexing
         }
 
         throw std::out_of_range("ID mismatch");
+    }
+
+    // Ranks vector of document by idf scores.
+    std::vector<scam::crawler::document> postings_list::rank_documents(const std::set<std::string>& query_terms, const std::vector<scam::crawler::document>& docs) noexcept
+    {
+        typedef scam::crawler::document doc_t;
+        typedef scam::crawler::pair<unsigned, doc_t> ds_pair;
+        
+        //std::vector<std::pair<unsigned, doc_t>> freq_scores;
+        std::vector<ds_pair> freq_scores;
+        unsigned doc_length = docs.size();
+
+        for (unsigned i = 0; i < doc_length; i++)
+        {
+            unsigned doc_idf_score = 0;
+
+            for (const auto& term : query_terms)
+            {
+                doc_idf_score += term_count(term, docs[i].content);
+            }
+
+            //freq_scores.push_back(std::pair<unsigned, doc_t>(doc_idf_score, docs[i]));
+            freq_scores.push_back(ds_pair(doc_idf_score, docs[i]));
+        }
+
+        std::sort(freq_scores.begin(), freq_scores.end(), [](const ds_pair& d1, const ds_pair& d2){
+            return d1.first > d2.first;
+        });
+
+        return convert_to_documents(freq_scores);
+    }
+
+    // Counts occurences of a term in string of terms.
+    unsigned postings_list::term_count(const std::string& term, const std::string& terms_str) noexcept
+    {
+        std::set<std::string> terms_set = terms(terms_str);
+        unsigned count = 0;
+
+        for (const auto& str : terms_set)
+        {
+            if (str.compare(term) == 0)
+                count++;
+        }
+
+        return count;
+    }
+
+    // Converts vector of pair<unsigned, scam::crawler::document> into vector of scam::crawler::documents.
+    static std::vector<scam::crawler::document> convert_to_documents(const std::vector<scam::crawler::pair<unsigned, scam::crawler::document>> docs)
+    {
+        std::vector<scam::crawler::document> result;
+        unsigned length = docs.size();
+
+        for (unsigned i = 0; i < length; i++)
+        {
+            result.push_back(docs[i].second);
+        }
+
+        return result;
     }
 
     // Checks for existence of word in inverted index.
