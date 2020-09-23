@@ -23,5 +23,9 @@ void test_get_str()
 // Tests words for being stop words.
 void test_stop_words()
 {
+    scam::indexing::term t1("cat"), t2("can"), t3("she");
 
+    assert(!t1.is_stop_word());
+    assert(t2.is_stop_word());
+    assert(t3.is_stop_word());
 }
