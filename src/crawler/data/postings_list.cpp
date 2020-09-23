@@ -144,14 +144,21 @@ namespace scam::indexing
         {
             if (str[i] == ' ')
             {
-                terms.insert(scam::indexing::term(temp).tokenize().stem().normalize().get_str());
+                scam::indexing::term t = scam::indexing::term(temp).tokenize().stem().normalize();
+
+                if (!t.is_stop_word())
+                    terms.insert(t.get_str());
+
                 temp = "";
             }
 
             else if (i == length - 1)
             {
                 temp += str[i];
-                terms.insert(scam::indexing::term(temp).tokenize().stem().normalize().get_str());
+                scam::indexing::term t = scam::indexing::term(temp).tokenize().stem().normalize();
+
+                if (!t.is_stop_word())
+                    terms.insert(scam::indexing::term(temp).tokenize().stem().normalize().get_str());
             }
 
             else
