@@ -54,6 +54,7 @@ namespace scam::crawler
     static std::string parse_content(const std::string& content);
     static bool analyse_content(const std::string& html_content, const std::vector<document>& documents);
     static std::set<std::string> extract_links(const std::string& html);
+    static inline bool status_ok(CURL* handle);
 
     // Returns vector of document contents.
     // This function will potentially never terminate. Should therefore be called in another thread.
@@ -88,6 +89,12 @@ namespace scam::crawler
                     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write::write_data);
                     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &buffer);
                     curl_easy_perform(handle);
+
+                    if (!status_ok(handle))
+                    {
+                        curl_easy_cleanup(handle);
+                        continue;
+                    }
 
 #if DEBUG
                     log_session(handle);
@@ -246,5 +253,15 @@ namespace scam::crawler
         }
 
         return links;
+    }
+
+    // Checks that status code from connection is 200.
+    // The handle must have been performed before calling this function.
+    static inline bool status_ok(CURL* handle)
+    {
+        long code;
+        curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &code);
+
+        return code == 200;
     }
 }
