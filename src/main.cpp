@@ -6,6 +6,7 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <limits.h>
 
 // Prototype.
 void display_search(const std::string& query, const scam::indexing::postings_list& postings);
@@ -31,10 +32,13 @@ int main(int argc, char** argv)
     });
 
     std::thread indexing_thread([&list, &docs](){
+        unsigned long addition = 0;
+        
         while (true)
         {
-            std::this_thread::sleep_for(std::chrono::seconds(INDEX_UPDATE_TIME));
+            std::this_thread::sleep_for(std::chrono::milliseconds(INDEX_UPDATE_TIME * 1000 + addition));
             list.reload(docs);
+            addition += addition < UINT64_MAX - 250 ? 200 : 0;
         }
     });
 
