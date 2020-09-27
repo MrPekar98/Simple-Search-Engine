@@ -10,6 +10,8 @@ namespace scam::indexing
     {
     private:
         std::string str;
+        void delete_trailing_special_chars() noexcept;
+        void delete_leading_special_chars() noexcept;
 
     public:
         term(const std::string& str) noexcept;
