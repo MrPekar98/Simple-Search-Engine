@@ -49,7 +49,7 @@ namespace scam::crawler
     static void load_seed_set(FRONTIER& frontier, const std::set<std::string>& urls);
     static inline void join_threads(std::vector<std::thread*>& threads);
     static void log_session(CURL* handle);
-    static CURL* handle_setup(const std::string& url);
+    static CURL* handle_setup();
     static void curl_handle_write(std::vector<document>& documents, const std::string& host, const std::string& content, FRONTIER& urls);
     static std::string parse_content(const std::string& content);
     static bool analyse_content(const std::string& html_content, const std::vector<document>& documents);
@@ -75,6 +75,8 @@ namespace scam::crawler
         {
             threads.push_back(new thread([&url_frontier, &result_documents](){
 #endif
+                CURL* handle = handle_setup();
+
                 while (!url_frontier.empty())
                 {
                     std::string buffer, url = url_frontier.get_next();
@@ -84,23 +86,19 @@ namespace scam::crawler
                         std::this_thread::sleep_for(std::chrono::seconds(4));
                         continue;
                     }
-
-                    CURL* handle = handle_setup(url);
+                    
+                    curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
                     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write::write_data);
                     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &buffer);
                     curl_easy_perform(handle);
 
                     if (!status_ok(handle))
-                    {
-                        curl_easy_cleanup(handle);
                         continue;
-                    }
 
 #if DEBUG
                     log_session(handle);
 #endif
                     curl_handle_write(result_documents, url, buffer, url_frontier);
-                    curl_easy_cleanup(handle);
                 }
 #if THREADING
             }));
@@ -155,7 +153,7 @@ namespace scam::crawler
     }
 
     // CURL crawling setup.
-    static CURL* handle_setup(const std::string& url)
+    static CURL* handle_setup()
     {
         CURL* handle = curl_easy_init();
         curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 1);
@@ -163,7 +161,6 @@ namespace scam::crawler
         curl_easy_setopt(handle, CURLOPT_USERAGENT, USER_AGENT);
         curl_easy_setopt(handle, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_easy_setopt(handle, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
-        curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
 
         return handle;
     }
