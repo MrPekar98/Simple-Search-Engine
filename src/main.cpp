@@ -32,13 +32,10 @@ int main(int argc, char** argv)
     });
 
     std::thread indexing_thread([&list, &docs](){
-        unsigned long addition = 0;
-        
         while (true)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(INDEX_UPDATE_TIME * 1000 + addition));
+            std::this_thread::sleep_for(std::chrono::milliseconds(INDEX_UPDATE_TIME));
             list.reload(docs);
-            addition += addition < UINT64_MAX - 250 ? 200 : 0;
         }
     });
 
