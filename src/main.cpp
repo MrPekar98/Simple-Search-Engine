@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     std::thread indexing_thread([&list, &docs](){
         while (true)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(INDEX_UPDATE_TIME));
+            std::this_thread::sleep_for(std::chrono::milliseconds(INDEX_UPDATE_TIME * 1000));
             list.reload(docs);
         }
     });
