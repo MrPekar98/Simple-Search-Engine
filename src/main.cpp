@@ -1,5 +1,6 @@
 #include "crawler/crawler.hpp"
 #include "crawler/data/postings_list.hpp"
+#include "pagerank/pagerank.hpp"
 #include "config.hpp"
 #include <vector>
 #include <set>
