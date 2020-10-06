@@ -185,7 +185,7 @@ namespace scam::crawler
 #endif
         }
 
-        documents.push_back(document(host, parse_content(content)));
+        documents.push_back(document(host, parse_content(content), extracted_links));
     }
 
     // Parses HTML.
