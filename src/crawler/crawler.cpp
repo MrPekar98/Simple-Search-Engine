@@ -86,7 +86,7 @@ namespace scam::crawler
                         std::this_thread::sleep_for(std::chrono::seconds(4));
                         continue;
                     }
-                    
+
                     curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
                     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write::write_data);
                     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &buffer);
