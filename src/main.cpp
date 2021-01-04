@@ -2,15 +2,25 @@
 #include "crawler/data/postings_list.hpp"
 #include "pagerank/pagerank.hpp"
 #include "config.hpp"
+#include "doc_logger.hpp"
 #include <vector>
 #include <set>
 #include <thread>
 #include <chrono>
+#include <ctime>
 #include <iostream>
 #include <limits.h>
+#include <fstream>
 
-// Prototype.
+#define CRAWL_LOG_TIME 30
+#define LOG_FILE_NAME "frontier_data"
+
+// Prototypes.
 void display_search(const std::string& query, const scam::indexing::postings_list& postings);
+template<typename C>
+void wait_and_log(C constraints, const std::string& file_name, const std::vector<scam::crawler::document>& docs);
+void log_documents(const std::string& file_name, const std::vector<scam::crawler::document>& docs);
+bool true_when(unsigned divisor);
 
 // Main function.
 int main(int argc, char** argv)
@@ -32,6 +42,14 @@ int main(int argc, char** argv)
         std::cout << "Crawling has terminated." << std::endl;
     });
 
+#if JUST_CRAWL
+    wait_and_log([]() {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        return true_when(CRAWL_LOG_TIME);
+    }, "crawled_docs", docs);
+    crawling_thread.join();
+
+#else
     std::thread indexing_thread([&list, &docs](){
         while (true)
         {
@@ -54,6 +72,7 @@ int main(int argc, char** argv)
 
     crawling_thread.join();
     indexing_thread.join();
+#endif
 
     return 0;
 }
@@ -71,4 +90,34 @@ void display_search(const std::string& query, const scam::indexing::postings_lis
 #endif
         std::cout << documents[i].url << std::endl << std::endl;
     }
+}
+
+// Busy-waits until constraint has been met.
+template<typename C>
+void wait_and_log(C constraint, const std::string& file_name, const std::vector<scam::crawler::document>& docs)
+{
+    while (true)
+    {
+        if (constraint())
+            log_documents(file_name, docs);
+    }
+}
+
+// Logs crawled documents to specific file.
+void log_documents(const std::string& file_name, const std::vector<scam::crawler::document>& docs)
+{
+#if DEBUG
+    std::cout << "Logging..." << std::endl;
+#endif
+
+    std::ofstream fout(LOG_FILE_NAME, std::ofstream::out);
+    scam::log::log_all(docs, fout);
+    fout.close();
+}
+
+// Returns true whenever current time is divisible by specified number.
+// Time is in seconds.
+bool true_when(unsigned divisor)
+{
+    return time(NULL) % divisor == 0;
 }
