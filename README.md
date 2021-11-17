@@ -1,6 +1,3 @@
-# Scam-search
-![](images/ScamBackground.jpg)
-
 ## Setup
 
 Enter directory `src/lib` and clone an HTML-parsing library:
