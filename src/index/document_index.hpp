@@ -5,25 +5,26 @@
 #include "location.hpp"
 #include "../document.hpp"
 #include <string>
+#include <map>
 
 namespace Pekar
 {
     // Indexing of ID to location on disk
-    class DocumentIndex: public Index<unsigned, Document>
+    class DocumentIndex: public Index<unsigned, Location>
     {
     public:
-        DocumentIndex(const std::string& dataFile);
-        void load(const std::set<Document>& items) noexcept override;
-        template <typename Key, typename Item>
-        void add(Key&& key, Item&& document) noexcept override;
-        template <typename Key>
-        void remove(Key&& key) noexcept override;
-        template <typename Key>
-        Document find(Key&& key) noexcept override;
+        DocumentIndex() = default;
+        static DocumentIndex create(const std::set<Location>& items);
+        std::set<unsigned> load(const std::set<Location>& items) override;
+        unsigned add(const Location& item) override;
+        void remove(const unsigned& key) override;
+        Location& find(const unsigned& key) override;
+        const std::set<unsigned>& keys() const noexcept;
 
     private:
-        std::string dataFile;
         std::map<unsigned, Location> idx;
+        std::set<unsigned> k;
+        unsigned keyCounter = 1;
     };
 }
 

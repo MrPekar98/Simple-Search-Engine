@@ -2,7 +2,6 @@
 #define INDEX_HPP
 
 #include <set>
-#include <map>
 
 namespace Pekar
 {
@@ -11,10 +10,10 @@ namespace Pekar
     {
     public:
         virtual ~Index() {}
-        virtual void load(const std::set<ItemType>& items) = 0;
-        virtual void add(KeyType&& key, ItemType&& item) = 0;
-        virtual void remove(KeyType&& key) = 0;
-        virtual ItemType find(KeyType&& key) = 0;
+        virtual std::set<KeyType> load(const std::set<ItemType>& items) = 0;
+        virtual KeyType add(const ItemType& item) = 0;
+        virtual void remove(const KeyType& key) = 0;
+        virtual ItemType& find(const KeyType& key) = 0;
     };
 }
 

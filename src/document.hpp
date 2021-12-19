@@ -7,14 +7,13 @@
 #include <type_traits>
 #include <sstream>
 #include <algorithm>
-
-#include <iostream>
+#include "serializable.hpp"
 
 namespace Pekar
 {
     static unsigned idCounter = 1;
 
-    class Document
+    class Document: public Serializable
     {
     public:
         using Iterator = typename std::set<std::string>::iterator;
@@ -30,6 +29,8 @@ namespace Pekar
         Document() = delete;
         Document(const Document& other) = default;
         Document(Document&& other) = default;
+        Document& operator=(const Document& other) = default;
+        Document& operator=(Document&& other) = default;
 
         // This setter can be dangerous to call!
         template<typename Id>
@@ -74,7 +75,7 @@ namespace Pekar
             return this->outLinks.cend();
         }
 
-        std::string serialize() const noexcept
+        std::string serialize() const noexcept override
         {
             std::string ser;
             std::stringstream ss;
@@ -87,8 +88,14 @@ namespace Pekar
                 ser += *it + ",";
             }
 
-            ser[ser.size() - 1] = '#';
-            ser += "##";
+            if (this->outLinks.size() > 0)
+            {
+                ser[ser.size() - 1] = '#';
+                ser += "##";
+            }
+
+            else
+                ser += "###";
 
             return ser;
         }
@@ -100,7 +107,7 @@ namespace Pekar
 
             unsigned i = 0;
             char c;
-            std::string id = "", url = "", content = "";
+            std::string id = "", url = "", content = "", outLink = "";
             std::set<std::string> outLinks;
 
             while ((c = ser[i++]) != '#' || ser[i] != '#' || ser[i + 1] != '#')
@@ -123,7 +130,6 @@ namespace Pekar
             }
 
             i += 2;
-            std::string outLink = "";
             
             while ((c = ser[i++]) != '#' || ser[i] != '#' || ser[i + 1] != '#')
             {

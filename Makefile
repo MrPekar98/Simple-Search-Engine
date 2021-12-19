@@ -1,6 +1,6 @@
 CC=g++
 BASE=src
-SRC := search.cpp
+SRC := search.cpp index/document_index.cpp store/document_store.cpp
 LIBS := lib/similarity/shingle.cpp
 INCLUDE=include
 CFLAGS=$(foreach l, $(LIBS), $(l)) -I$(INCLUDE) -I deps/html_parser/src -L deps/html_parser/src -I deps/curl/include -L deps/curl/lib
