@@ -1,17 +1,5 @@
-## Setup
+## Simple-search-engine
 
-Enter directory `src/lib` and clone an HTML-parsing library:
+Clone repository with 
 
-`git clone git@github.com:perak/html_parser.git`
-
-Make sure CURL is installed:
-
-Linux:
-
-`sudo apt install curl`
-
-Windows:
-
-Use [this guide](https://docs.microsoft.com/en-us/cpp/build/install-vcpkg?view=msvc-160&tabs=windows) to install VCPKG. The run the following command within the vcpkg directory:
-
-`bash vcpkg install curl`
+`git clone --recursive https://github.com/MrPekar98/Simple-Search-Engine.git`
