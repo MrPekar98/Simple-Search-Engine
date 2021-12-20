@@ -93,7 +93,7 @@ namespace Pekar
             {
                 counter++;
 
-                if (counter == 12)  // 12 is the number char '#' per object
+                if (counter == 12)  // 12 is the number char '#' per object. This counter is wrong when document content contains this char. Maybe count whenever we meet the string "###".
                 {
                     counter = 0;
                     this->locations.insert(Location(this->file, Block(pos, serialized.size())));

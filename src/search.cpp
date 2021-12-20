@@ -1,28 +1,21 @@
-#include "store/document_store.hpp"
+#include "config_parser.hpp"
+#include "query/query.hpp"
 
 #include <iostream>
 
 // TODO: Parse config.hpp to make sure all definitions required are there
 int main()
 {
-    Pekar::DocumentStore ds("test_data");
-
     try
     {
-        std::set<Pekar::Location> locations = ds.getLocations();
-
-        for (auto it = locations.begin(); it != locations.end(); it++)
-        {
-            std::cout << it->getFileName() << it->getFileBlock().pos << " - " << it->getFileBlock().blockLength << std::endl;
-        }
-
-        Pekar::Document d = ds.find(Pekar::Location("test_data", Pekar::Block(33, 59)));
-        std::cout << d.serialize() << std::endl;
+        parse();
+        Pekar::Query q = Pekar::Query::make(std::string("Hello world"));
+        std::cout << q.queryString() << std::endl;
     }
 
-    catch (std::string& error)
+    catch (const std::system_error& error)
     {
-        std::cout << "Error: " << error << std::endl;
+        std::cerr << error.what() << std::endl;
     }
 
     return 0;
