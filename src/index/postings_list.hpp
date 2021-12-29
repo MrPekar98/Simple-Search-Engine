@@ -11,7 +11,7 @@ namespace Pekar
     class PostingsList: public Index<std::string, std::set<Document>>
     {
     public:
-        PostingsList()
+        PostingsList();
     };
 }
 

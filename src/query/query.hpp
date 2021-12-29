@@ -14,6 +14,7 @@ namespace Pekar
         Query(Query&& other) = default;
         std::string queryString() const noexcept;
         const Term& operator[](const unsigned& i) const;
+        unsigned length() const noexcept;
         static Query make(const std::string& queryString) noexcept;
 
     private:

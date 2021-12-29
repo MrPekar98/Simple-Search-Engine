@@ -24,6 +24,11 @@ namespace Pekar
         return this->query[i];
     }
 
+    unsigned Query::length() const noexcept
+    {
+        return this->query.size();
+    }
+
     Query Query::make(const std::string& queryString) noexcept
     {
         return Query(Tokenizer::tokenize(queryString));
