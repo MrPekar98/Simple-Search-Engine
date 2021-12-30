@@ -58,9 +58,10 @@ namespace Pekar
         std::vector<Term> documentTerms = Tokenizer::tokenize(d.getContent());
         unsigned sum = 0;
 
-        for (const Term& dTerm : documentTerms)
+        for (Term& dTerm : documentTerms)
         {
-            sum += subStringCount(dTerm.getTerm(), d.getContent());
+            if (!dTerm.isStopWord())
+                sum += subStringCount(dTerm.getTerm(), d.getContent());
         }
 
         return (double) subStringCount(t.getTerm(), d.getContent()) / sum;
