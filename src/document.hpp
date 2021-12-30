@@ -75,6 +75,11 @@ namespace Pekar
             return this->outLinks.cend();
         }
 
+        bool operator<(const Document& other) const noexcept
+        {
+            return this->id < other.getId();
+        }
+
         std::string serialize() const noexcept override
         {
             std::string ser;

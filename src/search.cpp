@@ -1,6 +1,7 @@
 #include "config_parser.hpp"
 #include "query/query.hpp"
 #include "query/ranker.hpp"
+#include "index/postings_list.hpp"
 
 #include <iostream>
 
@@ -19,6 +20,15 @@ int main()
         for (auto it = ranked.cbegin(); it != ranked.cend(); it++)
         {
             std::cout << " - " << it->getUrl() << std::endl;
+        }
+
+        Pekar::PostingsList pl(std::string(DATA_PATH) + std::string(DATA_FILE));
+        //pl.add(std::set<Pekar::Document>({d1, d2, d3}));
+        std::set<Pekar::Document> docsFound = pl.find("test");
+
+        for (const auto& d : docsFound)
+        {
+            std::cout << d.getUrl() << std::endl;
         }
     }
 

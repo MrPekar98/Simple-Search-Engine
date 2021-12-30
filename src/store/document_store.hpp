@@ -14,7 +14,7 @@ namespace Pekar
     class DocumentStore: public Index<Location, Document>
     {
     public:
-        DocumentStore() = default;
+        DocumentStore() = delete;
         DocumentStore(const DocumentStore& other) = delete;
         DocumentStore(DocumentStore&& other) = delete;
         DocumentStore& operator=(const DocumentStore& other) = delete;
