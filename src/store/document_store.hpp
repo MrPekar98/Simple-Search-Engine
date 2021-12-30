@@ -15,10 +15,10 @@ namespace Pekar
     {
     public:
         DocumentStore() = delete;
-        DocumentStore(const DocumentStore& other) = delete;
-        DocumentStore(DocumentStore&& other) = delete;
-        DocumentStore& operator=(const DocumentStore& other) = delete;
-        DocumentStore& operator=(DocumentStore&& other) = delete;
+        DocumentStore(const DocumentStore& other) = default;
+        DocumentStore(DocumentStore&& other) = default;
+        DocumentStore& operator=(const DocumentStore& other) = default;
+        DocumentStore& operator=(DocumentStore&& other) = default;
         DocumentStore(const std::string& dataFile);
         std::set<Location> load(const std::set<Document>& items) override;
         Location add(const Document& item) override;

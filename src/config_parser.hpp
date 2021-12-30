@@ -8,10 +8,6 @@ void parse()
 {
     std::error_code err = std::make_error_code(std::errc::protocol_error);
 
-#ifndef DATA_PATH
-    throw std::system_error(err, "Mising data path");
-#endif
-
 #ifndef DATA_FILE
     throw std::system_error(err, "Missing data file name");
 #endif

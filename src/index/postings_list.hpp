@@ -15,6 +15,11 @@ namespace Pekar
     {
     public:
         PostingsList(const std::string& dataFile);
+        PostingsList() = delete;
+        PostingsList(const PostingsList& other) = default;
+        PostingsList(PostingsList&& other) = default;
+        PostingsList& operator=(const PostingsList& other) = default;
+        PostingsList& operator=(PostingsList&& other) = default;
         std::set<std::string> load(const std::set<std::set<Document>>& items) override;
         std::string add(const std::set<Document>& item) override;
         void remove(const std::string& key) override;

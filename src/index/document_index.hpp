@@ -14,6 +14,10 @@ namespace Pekar
     {
     public:
         DocumentIndex() = default;
+        DocumentIndex(const DocumentIndex& other) = default;
+        DocumentIndex(DocumentIndex&& other) = default;
+        DocumentIndex& operator=(const DocumentIndex& other) = default;
+        DocumentIndex& operator=(DocumentIndex&& other) = default;
         static DocumentIndex create(const std::set<Location>& items);
         std::set<unsigned> load(const std::set<Location>& items) override;
         unsigned add(const Location& item) override;

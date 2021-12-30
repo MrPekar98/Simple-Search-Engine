@@ -2,10 +2,12 @@
 #define CONFIG_HPP
 
 // Data store file
-#define DATA_PATH "data/"
-#define DATA_FILE "data"
+#define DATA_FILE "data/data"
 
 // Stop words file
 #define STOP_WORDS "assets/stop_words.txt"
+
+// Searching
+#define SIM_THRES 0.5
 
 #endif

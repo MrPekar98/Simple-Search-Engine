@@ -80,6 +80,21 @@ namespace Pekar
             return this->id < other.getId();
         }
 
+        bool operator==(const Document& other) const noexcept
+        {
+            if (this->id != other.getId() || this->url != other.getUrl() || this->content != other.getContent())
+                return false;
+
+            for (auto it1 = this->outLinks.cbegin(), it2 = other.outLinks.cbegin(); 
+                    it1 != this->outLinks.cend() && it2 != other.outLinks.cend(); it1++, it2++)
+            {
+                if (*it1 != *it2)
+                    return false;
+            }
+
+            return true;
+        }
+
         std::string serialize() const noexcept override
         {
             std::string ser;
