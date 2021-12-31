@@ -136,7 +136,7 @@ namespace Pekar
             }
 
             i += 2;
-            
+
             while ((c = ser[i++]) != '#' || ser[i] != '#' || ser[i + 1] != '#')
             {
                 url += c;

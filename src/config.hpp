@@ -9,5 +9,7 @@
 
 // Searching
 #define SIM_THRES 0.5
+#define THREADS 1
+#define STORE_CONTENT 0
 
 #endif
