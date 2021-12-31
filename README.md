@@ -8,4 +8,4 @@ Clone repository with
 
 Install Curl
 
-``sudo apt install curl -y && sudo apt install libcurl4-gnutls-dev````
+```sudo apt install curl -y && sudo apt install libcurl4-gnutls-dev```
