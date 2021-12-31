@@ -3,6 +3,7 @@
 #include "query/ranker.hpp"
 #include "index/postings_list.hpp"
 #include "query/document_search.hpp"
+#include "crawler/frontier.hpp"
 
 #include <iostream>
 
@@ -24,6 +25,11 @@ int main()
         {
             std::cout << d.getUrl() << std::endl;
         }
+
+        Pekar::SimpleFrontier frontier;
+        frontier.add("google.com");
+        std::cout << "Frontier next: " << frontier.next() << std::endl;
+        std::cout << "Frontier empty: " << (frontier.empty() ? "yes" : "no") << std::endl;
     }
 
     catch (const char* err)
