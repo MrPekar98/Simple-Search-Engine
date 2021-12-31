@@ -9,7 +9,9 @@
 
 // Searching
 #define SIM_THRES 0.5
+#define MIN_RANK_SCORE 0.5
 #define THREADS 1
 #define STORE_CONTENT 0
+#define SHINGLES 3
 
 #endif

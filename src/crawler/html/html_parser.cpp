@@ -52,4 +52,56 @@ namespace Pekar
 
         return pv;
     }
+
+    std::set<std::string> BaseHtmlParser::links() const noexcept
+    {
+        std::set<std::string> links;
+        size_t start = -1, len = 0;
+
+        do
+        {
+            start = this->html.find("http", start + 1);
+
+            if (start == std::string::npos)
+                break;
+
+            len = BaseHtmlParser::urlStringEndIdx(this->html.substr(start));
+
+            if (len == -1)
+                continue;
+
+            links.insert(this->html.substr(start, len));
+        }
+        while (start != std::string::npos);
+
+        return links;
+    }
+
+    int BaseHtmlParser::urlStringEndIdx(const std::string& str) noexcept
+    {
+        unsigned idx = str.find("://");
+        idx += 3;
+        unsigned LENGTH_LIMIT = 50;
+
+        for (; idx < str.size(); idx++)
+        {
+            if (idx >= LENGTH_LIMIT)
+                return -1;
+
+            switch (str[idx])
+            {
+                case '"':
+                case '\'':
+                case ' ':
+                case ':':
+                case ';':
+                    return idx;
+                case '\n':
+                case '\t':
+                    return -1;
+            }
+        }
+
+        return idx;
+    }
 }

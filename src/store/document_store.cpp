@@ -80,7 +80,7 @@ namespace Pekar
     {
         this->mtx.lock();
 
-        std::string serialized = "";
+        std::string serialized = "", sep = "---";
         char c;
         unsigned counter = 0;
         long pos = 0;
@@ -88,12 +88,16 @@ namespace Pekar
         while (file.get(c))
         {
             serialized += c;
+            sep[0] = sep[1];
+            sep[1] = sep[2];
+            sep[2] = c;
 
-            if (c == '#')
+            if (sep == "###")
             {
                 counter++;
+                sep = "---";
 
-                if (counter == 12)  // 12 is the number char '#' per object. This counter is wrong when document content contains this char. Maybe count whenever we meet the string "###".
+                if (counter == 4)  // 4 is the number string "###" per object
                 {
                     counter = 0;
                     this->locations.insert(Location(this->file, Block(pos, serialized.size())));

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 namespace Pekar
 {
@@ -25,8 +26,10 @@ namespace Pekar
         std::string title() const override;
         std::string body() const override;
         std::vector<std::string> paragraphs() const override;
+        std::set<std::string> links() const noexcept;
 
     private:
+        static int urlStringEndIdx(const std::string& str) noexcept;
         std::string html;
     };
 }

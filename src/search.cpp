@@ -1,48 +1,39 @@
 #include "config_parser.hpp"
 #include "query/query.hpp"
-#include "query/ranker.hpp"
 #include "index/postings_list.hpp"
 #include "query/document_search.hpp"
-#include "crawler/frontier.hpp"
 #include "crawler/crawler.hpp"
-#include "crawler/html/html_parser.hpp"
-
 #include <iostream>
+#include <thread>
 
-// TODO: Parse config.hpp to make sure all definitions required are there
+// This is temporary. A server should be setup instead.
 int main()
 {
     try
     {
-        /*parse();
-        Pekar::Document d1("site1", "Here is some test content", std::set<std::string>({"google.com", "facebook.com"})), d2("site2", "content3", std::set<std::string>({"google.com", "facebook.com"})),
-            d3("site3", "test some other hello", std::set<std::string>({"google.com", "facebook.com"}));
-
-        Pekar::Query q = Pekar::Query::make("test");*/
+        parse();
         Pekar::PostingsList pl(std::string(DATA_FILE));
-        //pl.add(std::set<Pekar::Document>({d1, d2, d3}));
-        /*std::vector<Pekar::Document> searchResult = Pekar::DocumentSearch::search(q, pl, 0.5);
-
-        for (const auto& d : searchResult)
+        std::thread t([&pl](){ Pekar::crawl(std::set<std::string>({"https://www.apple.com/", "https://www.microsoft.com/"}), pl, THREADS); });
+    
+        while (true)
         {
-            std::cout << d.getUrl() << std::endl;
+            std::string input;
+            std::cout << ": ";
+            std::cin >> input;
+
+            Pekar::Query q = Pekar::Query::make(input);
+            std::vector<Pekar::Document> searchResult = Pekar::DocumentSearch::search(q, pl, MIN_RANK_SCORE);
+            std::cout << std::endl;
+
+            for (const auto& d : searchResult)
+            {
+                std::cout << d.getUrl() << std::endl;
+            }
+
+            std::cout << std::endl << std::endl;
         }
 
-        Pekar::SimpleFrontier frontier;
-        frontier.add("google.com");
-        std::cout << "Frontier next: " << frontier.next() << std::endl;
-        std::cout << "Frontier empty: " << (frontier.empty() ? "yes" : "no") << std::endl;*/
-        
-        Pekar::crawl(std::set<std::string>({"https://www.apple.com/"}), pl, THREADS);
-        /*Pekar::Query q = Pekar::Query::make("iCloud");
-        std::vector<Pekar::Document> searchResult = Pekar::DocumentSearch::search(q, pl, 0.1);
-        std::cout << "Size: " << pl.find(q.queryString()).size() << std::endl;
-        std::cout << "Query: " << q.queryString() << std::endl;
-
-        for (const auto& d : searchResult)
-        {
-            std::cout << d.getUrl() << std::endl;
-        }*/
+        t.join();
     }
 
     catch (const char* err)

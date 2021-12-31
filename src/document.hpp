@@ -122,9 +122,6 @@ namespace Pekar
 
         static Document deserialize(const std::string ser)
         {
-            if (std::count(ser.cbegin(), ser.cend(), '#') != 12)
-                throw "Serialized document parsing error!";
-
             unsigned i = 0;
             char c;
             std::string id = "", url = "", content = "", outLink = "";

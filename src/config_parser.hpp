@@ -10,22 +10,18 @@ void parse()
 
 #ifndef DATA_FILE
     throw std::system_error(err, "Missing data file name");
-#endif
-
-#ifndef STOP_WORDS
+#elif !defined(STOP_WORDS)
     throw std::system_error(err, "Missing stop words file");
-#endif
-
-#ifndef SIM_THRES
+#elif !defined(SIM_THRES)
     throw std::system_error(err, "Missing similarity threshold");
-#endif
-
-#ifndef THREADS
+#elif !defined(THREADS)
     throw std::system_error(err, "Missing number of threads");
-#endif
-
-#ifndef STORE_CONTENT
+#elif !defined(STORE_CONTENT)
     throw std::system_error(err, "Missing whether to store document content");
+#elif !defined(MIN_RANK_SCORE)
+    throw std::system_error(err, "Missing min rank score");
+#elif !defined(SHINGLES)
+    throw std::system_error(err, "Shingle length not defined");
 #endif
 }
 

@@ -71,4 +71,19 @@ namespace Pekar
 
         return this->foundDocuments;
     }
+
+    const std::set<Document>& PostingsList::all() noexcept
+    {
+        std::set<Document> docs;
+
+        for (auto it = this->termToDocuments.cbegin(); it != this->termToDocuments.cend(); it++)
+        {
+            std::set<Document> subset = find(it->first);
+            docs.insert(subset.cbegin(), subset.cend());
+        }
+
+        this->foundDocuments.clear();
+        this->foundDocuments = docs;
+        return this->foundDocuments;
+    }
 }

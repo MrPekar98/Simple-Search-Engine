@@ -24,6 +24,7 @@ namespace Pekar
         std::string add(const std::set<Document>& item) override;
         void remove(const std::string& key) override;
         std::set<Document>& find(const std::string& key) override;
+        const std::set<Document>& all() noexcept;
 
     private:
         DocumentIndex dIdx;

@@ -6,8 +6,7 @@
 #include <curl/curl.h>
 #include <thread>
 #include <vector>
-
-#include <iostream>
+#include <similarity/jaccard.hpp>
 
 namespace Pekar
 {
@@ -34,8 +33,7 @@ namespace Pekar
     static CURL* getHandle();
     static void loadFrontier(const std::set<std::string>& seedSet, AbstractFrontier& frontier);
     static inline bool checkStatus(CURL* handle);
-    static bool fingerprintCheck(const std::string& content, const PostingsList& pl);
-    static std::set<std::string> extractLinks(const std::string& content, const std::string& baseUrl);
+    static bool fingerprintCheck(const Document& d, PostingsList& pl);
     static inline std::string concatStrings(const std::vector<std::string>& strings);
     static inline std::string termString(const std::vector<Term>& terms);
 
@@ -67,21 +65,32 @@ namespace Pekar
             curl_easy_setopt(handle, CURLOPT_WRITEDATA, &buffer);
             curl_easy_perform(handle);
 
-            if (!checkStatus(handle) || !fingerprintCheck(buffer, pl))
+            if (!checkStatus(handle))
+            {
+                pl.remove(url);
                 continue;
+            }
 
-            std::set<std::string> links = extractLinks(buffer, url);
             BaseHtmlParser parser(buffer);
+            std::set<std::string> links = parser.links();
 
 #if STORE_CONTENT
-            pl.add(std::set<Document>({Document(url, termString(Tokenizer::tokenize(concatStrings(parser.paragraphs()))), links)}));
+            std::string content = termString(Tokenizer::tokenize(concatStrings(parser.paragraphs())));
 #else
-            pl.add(std::set<Document>({Document(url, termString(Tokenizer::tokenize(parser.title())), links)}));
+            std::string content = termString(Tokenizer::tokenize(parser.title()));
 #endif
+
+            Document d(url, content, links);
+
+            if (!fingerprintCheck(d, pl))
+                continue;
+
+            pl.add(std::set<Document>({d}));
 
             for (const std::string& link : links)
             {
-                frontier.add(link);
+                if (link != url)
+                    frontier.add(link);
             }
         }
     }
@@ -116,29 +125,23 @@ namespace Pekar
     }
 
     // Return false if content is too similar to another document according to Jaccard coefficient
-    static bool fingerprintCheck(const std::string& content, const PostingsList& pl)
+    static bool fingerprintCheck(const Document& d, PostingsList& pl)
     {
-        return true;
-    }
+        std::set<Document> docs = pl.all();
+        Shingle s1 = Shingle::buildShingles(d.getContent(), SHINGLES);
 
-    static std::set<std::string> extractLinks(const std::string& content, const std::string& baseUrl)
-    {
-        std::set<std::string> links;
-        size_t start = 0, end = 0;
-
-        while (end != std::string::npos)
+        for (const Document& doc : docs)
         {
-            start = content.find("http", end);
+            if (d.getUrl() == doc.getUrl())
+                return false;
 
-            if (start == std::string::npos)
-                break;
+            Shingle s2 = Shingle::buildShingles(doc.getContent(), SHINGLES);
 
-            end = content.find("\"", start + 8);
-            links.insert(content.substr(start, end - start));
-            std::cout << content.substr(start, end - start) << std::endl;
+            if (Jaccard::jaccard(s1.getShingles(), s2.getShingles()) > SIM_THRES)
+                return false;
         }
 
-        return links;
+        return true;
     }
 
     static inline std::string concatStrings(const std::vector<std::string>& strings)

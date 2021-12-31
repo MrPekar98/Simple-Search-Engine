@@ -28,7 +28,7 @@ namespace Pekar
                 scores.push_back(Pair<Document, double>(Document(*it), std::move(s)));
         }
 
-        std::sort(scores.begin(), scores.end(), [](const auto& a, const auto& b){ return a.second >= b.second; });
+        std::sort(scores.begin(), scores.end(), [](const auto& a, const auto& b){ return a.second > b.second; });
         std::for_each(scores.cbegin(), scores.cend(), [&ranked](const auto& pair){ ranked.push_back(pair.first); });
 
         return ranked;
