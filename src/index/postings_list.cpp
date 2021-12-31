@@ -37,7 +37,7 @@ namespace Pekar
         for (const Document& d : item)
         {
             std::vector<Term> terms = Tokenizer::tokenize(d.getContent());
-            Location l = this->dStore.add(d);   // Here
+            Location l = this->dStore.add(d);
             unsigned id = this->dIdx.add(l);
 
             for (const Term& t : terms)

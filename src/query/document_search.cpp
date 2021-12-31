@@ -28,8 +28,11 @@ namespace Pekar
         std::vector<Term> tv = DocumentSearch::terms(q);
         std::vector<Document> docs;
 
-        for (const Term& t : tv)
+        for (Term& t : tv)
         {
+            if (t.isStopWord())
+                continue;
+
             std::set<Document> foundDocs = pl.find(t.getTerm());
             
             for (const Document& doc : foundDocs)

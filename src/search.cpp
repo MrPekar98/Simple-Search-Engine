@@ -5,6 +5,7 @@
 #include "query/document_search.hpp"
 #include "crawler/frontier.hpp"
 #include "crawler/crawler.hpp"
+#include "crawler/html/html_parser.hpp"
 
 #include <iostream>
 
@@ -32,14 +33,16 @@ int main()
         std::cout << "Frontier next: " << frontier.next() << std::endl;
         std::cout << "Frontier empty: " << (frontier.empty() ? "yes" : "no") << std::endl;*/
         
-        //Pekar::crawl(std::set<std::string>({"https://www.msn.com/da-dk/"}), pl, THREADS);
-        Pekar::Query q = Pekar::Query::make("https://www.msn.com/da-dk/");
+        Pekar::crawl(std::set<std::string>({"https://www.apple.com/"}), pl, THREADS);
+        /*Pekar::Query q = Pekar::Query::make("iCloud");
         std::vector<Pekar::Document> searchResult = Pekar::DocumentSearch::search(q, pl, 0.1);
+        std::cout << "Size: " << pl.find(q.queryString()).size() << std::endl;
+        std::cout << "Query: " << q.queryString() << std::endl;
 
         for (const auto& d : searchResult)
         {
             std::cout << d.getUrl() << std::endl;
-        }
+        }*/
     }
 
     catch (const char* err)

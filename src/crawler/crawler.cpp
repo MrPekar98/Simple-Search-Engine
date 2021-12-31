@@ -1,10 +1,13 @@
 #include "crawler.hpp"
 #include "frontier.hpp"
 #include "../config.hpp"
+#include "../tokenizer.hpp"
+#include "html/html_parser.hpp"
 #include <curl/curl.h>
-#include <cppw_htmlparser.h>
 #include <thread>
 #include <vector>
+
+#include <iostream>
 
 namespace Pekar
 {
@@ -33,7 +36,8 @@ namespace Pekar
     static inline bool checkStatus(CURL* handle);
     static bool fingerprintCheck(const std::string& content, const PostingsList& pl);
     static std::set<std::string> extractLinks(const std::string& content, const std::string& baseUrl);
-    static std::string getTitle(const std::string& content);
+    static inline std::string concatStrings(const std::vector<std::string>& strings);
+    static inline std::string termString(const std::vector<Term>& terms);
 
     void crawl(const std::set<std::string>& seedSet, PostingsList& pl, const unsigned& threadCount) noexcept
     {
@@ -67,11 +71,12 @@ namespace Pekar
                 continue;
 
             std::set<std::string> links = extractLinks(buffer, url);
+            BaseHtmlParser parser(buffer);
 
 #if STORE_CONTENT
-            pl.add(std::set<Document>({Document(url, buffer, links)}));
+            pl.add(std::set<Document>({Document(url, termString(Tokenizer::tokenize(concatStrings(parser.paragraphs()))), links)}));
 #else
-            pl.add(std::set<Document>({Document(url, getTitle(buffer), links)}));
+            pl.add(std::set<Document>({Document(url, termString(Tokenizer::tokenize(parser.title())), links)}));
 #endif
 
             for (const std::string& link : links)
@@ -119,31 +124,44 @@ namespace Pekar
     static std::set<std::string> extractLinks(const std::string& content, const std::string& baseUrl)
     {
         std::set<std::string> links;
-        unsigned length = content.length();
+        size_t start = 0, end = 0;
 
-        for (unsigned i = 0; i < length; i++)
+        while (end != std::string::npos)
         {
-            if (content.substr(i, 4).compare("href") == 0 && content.substr(i + 6, 4).compare("http") == 0)
-            {
-                std::string startstr = content.substr(i + 6);
-                std::string link = startstr.substr(0, startstr.find_first_of('"'));
+            start = content.find("http", end);
 
-                if (link != baseUrl)
-                    links.insert(link);
-                
-                i = startstr.find_first_of('"') + i;
-            }
+            if (start == std::string::npos)
+                break;
+
+            end = content.find("\"", start + 8);
+            links.insert(content.substr(start, end - start));
+            std::cout << content.substr(start, end - start) << std::endl;
         }
 
         return links;
     }
 
-    static std::string getTitle(const std::string& content)
+    static inline std::string concatStrings(const std::vector<std::string>& strings)
     {
-        CWNode tree;
-        std::string error;
-        tree.ParseHTML(content, &error);
+        std::string concat = "";
 
-        return tree.FindChildByName("title", false, true)->GetText();
+        for (const auto& str : strings)
+        {
+            concat += " " + str;
+        }
+
+        return concat;
+    }
+
+    static inline std::string termString(const std::vector<Term>& terms)
+    {
+        std::string str = "";
+
+        for (const Term& t : terms)
+        {
+            str += t.getTerm() + " ";
+        }
+
+        return str.erase(str.length() - 1);
     }
 }

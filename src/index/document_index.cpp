@@ -1,5 +1,4 @@
 #include "document_index.hpp"
-
 #include <utility>
 
 namespace Pekar
