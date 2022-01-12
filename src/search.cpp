@@ -1,10 +1,6 @@
 #include "config_parser.hpp"
-#include "query/query.hpp"
-#include "index/postings_list.hpp"
-#include "query/document_search.hpp"
-#include "crawler/crawler.hpp"
+#include "server/server.hpp"
 #include <iostream>
-#include <thread>
 
 // This is temporary. A server should be setup instead.
 int main()
@@ -12,7 +8,11 @@ int main()
     try
     {
         parse();
-        Pekar::PostingsList pl(std::string(DATA_FILE));
+        
+        Pekar::Server s(HOST, PORT, Pekar::ReturnType::TEXT, SEED, DATA_FILE);
+        s.start(false);
+
+        /*Pekar::PostingsList pl(std::string(DATA_FILE));
         std::thread t([&pl](){ Pekar::crawl(std::set<std::string>({"https://www.apple.com/", "https://www.microsoft.com/"}), pl, THREADS); });
     
         while (true)
@@ -33,7 +33,7 @@ int main()
             std::cout << std::endl << std::endl;
         }
 
-        t.join();
+        t.join();*/
     }
 
     catch (const char* err)

@@ -22,6 +22,10 @@ void parse()
     throw std::system_error(err, "Missing min rank score");
 #elif !defined(SHINGLES)
     throw std::system_error(err, "Shingle length not defined");
+#elif !defined(HOST)
+    throw std::system_error(err, "Missing host address");
+#elif !defined(PORT)
+    throw std::system_error(err, "Missing port number specification");
 #endif
 }
 
