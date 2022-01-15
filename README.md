@@ -65,4 +65,4 @@ Run the Docker container
 docker run --name search -p <PORT>:<PORT> search
 ```
 
-Set _<PORT>_ to the port number specified in _src/config.hpp_.
+Set _\<PORT\>_ to the port number specified in _src/config.hpp_.
