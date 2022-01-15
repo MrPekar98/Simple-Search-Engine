@@ -9,12 +9,11 @@ RUN apt-get install libwebsocketpp-dev -y
 RUN apt-get install openssl libssl-dev -y
 RUN apt-get install ninja-build -y
 
-RUN mkdir search/
+RUN git clone https://github.com/MrPekar98/Simple-Search-Engine.git search
 WORKDIR search/
 
 RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca
-RUN cd casablanca && mkdir build.debug && cd build.debug && cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Release && ninja && ninja install && cd ../..
-
+RUN cd casablanca && mkdir build.debug && cd build.debug && cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Release && ninja && ninja install && cd /search
 RUN make
 
 CMD [ "./search" ]
