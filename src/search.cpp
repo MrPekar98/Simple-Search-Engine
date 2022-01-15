@@ -2,7 +2,6 @@
 #include "server/server.hpp"
 #include <iostream>
 
-// This is temporary. A server should be setup instead.
 int main()
 {
     try
@@ -11,29 +10,6 @@ int main()
         
         Pekar::Server s(HOST, PORT, Pekar::ReturnType::TEXT, SEED, DATA_FILE);
         s.start(false);
-
-        /*Pekar::PostingsList pl(std::string(DATA_FILE));
-        std::thread t([&pl](){ Pekar::crawl(std::set<std::string>({"https://www.apple.com/", "https://www.microsoft.com/"}), pl, THREADS); });
-    
-        while (true)
-        {
-            std::string input;
-            std::cout << ": ";
-            std::cin >> input;
-
-            Pekar::Query q = Pekar::Query::make(input);
-            std::vector<Pekar::Document> searchResult = Pekar::DocumentSearch::search(q, pl, MIN_RANK_SCORE);
-            std::cout << std::endl;
-
-            for (const auto& d : searchResult)
-            {
-                std::cout << d.getUrl() << std::endl;
-            }
-
-            std::cout << std::endl << std::endl;
-        }
-
-        t.join();*/
     }
 
     catch (const char* err)

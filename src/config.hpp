@@ -19,7 +19,7 @@
 #define SEED std::set<std::string>({"https://www.apple.com/", "https://www.microsoft.com/"})
 
 // Server
-#define HOST "127.0.0.1localhost"
-#define PORT 8080
+#define HOST "localhost"
+#define PORT 9000
 
 #endif

@@ -40,3 +40,13 @@ cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Debug
 ninja
 sudo ninja install
 ```
+
+## Compile
+
+To compile the project, simply run the command
+
+```
+make
+```
+
+Now, an executable _search_ is built in the project root.

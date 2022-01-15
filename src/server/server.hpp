@@ -32,12 +32,13 @@ namespace Pekar
 
     private:
         static std::string toStr(const ReturnType& rt) noexcept;
-        static void handler(web::http::http_request request);
+        static void getHandler(web::http::http_request request);
+        static void postHandler(web::http::http_request request);
         Pekar::PostingsList pl;
         const std::set<std::string> seed;
         std::thread crawler_thread;
         web::http::experimental::listener::http_listener listener;
-        bool detach;
+        bool detach, started = false;
     };
 }
 
