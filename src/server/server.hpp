@@ -21,7 +21,7 @@ namespace Pekar
     class Server
     {
     public:
-        Server(const std::string& host, const unsigned short& port, const ReturnType& returnType, const std::set<std::string> seedSet, const std::string& dbBackingFile);
+        Server(const std::string& host, const unsigned short& port, const ReturnType& returnType, const std::set<std::string> seedSet);
         Server(const Server& other) = delete;
         Server(Server&& other) = delete;
         Server& operator=(const Server& other) = delete;
@@ -32,9 +32,10 @@ namespace Pekar
 
     private:
         static std::string toStr(const ReturnType& rt) noexcept;
+        static std::string toStr(const std::vector<Document>& docs) noexcept;
         static void getHandler(web::http::http_request request);
         static void postHandler(web::http::http_request request);
-        Pekar::PostingsList pl;
+        //static PostingsList index;
         const std::set<std::string> seed;
         std::thread crawler_thread;
         web::http::experimental::listener::http_listener listener;

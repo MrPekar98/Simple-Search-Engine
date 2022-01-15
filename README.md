@@ -1,9 +1,11 @@
-## Simple-search-engine
+# Simple-search-engine
+
+## Instructions
 
 Clone repository with 
 
 ```
-git clone --recursive https://github.com/MrPekar98/Simple-Search-Engine.git
+git clone https://github.com/MrPekar98/Simple-Search-Engine.git
 ```
 
 ### Prerequisites
@@ -45,7 +47,7 @@ ninja
 sudo ninja install
 ```
 
-## Compile
+### Compile
 
 To compile the project, simply run the command
 
@@ -54,6 +56,8 @@ make
 ```
 
 Now, an executable _search_ is built in the project root.
+
+Note that you can specify the crawler seed set in _src/config.hpp_. Choosing a set of web pages with a high out-degree is recommended.
 
 ### Docker
 
@@ -71,3 +75,8 @@ docker run --name search -p <PORT>:<PORT> search
 
 Set _\<PORT\>_ to the port number specified in _src/config.hpp_.
 Add the flag  _-d_ to detach from the process.
+
+## Communicating With the Search Engine
+
+A simple web page is provided with a search bar. Otherwise, you can send a simple POST request with search keyword in the request body.
+The search result is a simple plain text with relavant document titles and their URL.

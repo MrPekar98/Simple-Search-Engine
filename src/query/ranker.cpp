@@ -38,6 +38,7 @@ namespace Pekar
     {
         unsigned len = q.length();
         double s = 0;
+        unsigned counter = 0;
         
         for (unsigned i = 0; i < len; i++)
         {

@@ -26,6 +26,8 @@ void parse()
     throw std::system_error(err, "Missing host address");
 #elif !defined(PORT)
     throw std::system_error(err, "Missing port number specification");
+#elif !defined(HOMEPAGE)
+    throw std::system_error(err, "Missing homepage HTML directory path");
 #endif
 }
 

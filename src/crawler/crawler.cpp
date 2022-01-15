@@ -75,9 +75,9 @@ namespace Pekar
             std::set<std::string> links = parser.links();
 
 #if STORE_CONTENT
-            std::string content = termString(Tokenizer::tokenize(concatStrings(parser.paragraphs())));
+            std::string content = termString(Tokenizer::tokenize(concatStrings(parser.paragraphs()).substr(0, 50)));
 #else
-            std::string content = termString(Tokenizer::tokenize(parser.title()));
+            std::string content = termString(Tokenizer::tokenize(parser.title().substr(0, 50)));
 #endif
 
             Document d(url, content, links);

@@ -8,7 +8,7 @@ int main()
     {
         parse();
         
-        Pekar::Server s(HOST, PORT, Pekar::ReturnType::TEXT, SEED, DATA_FILE);
+        Pekar::Server s(HOST, PORT, Pekar::ReturnType::TEXT, SEED);
         s.start(false);
     }
 

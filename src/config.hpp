@@ -22,4 +22,7 @@
 #define HOST "localhost"
 #define PORT 9000
 
+// Web
+#define HOMEPAGE "web/homepage.html"
+
 #endif
