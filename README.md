@@ -50,3 +50,19 @@ make
 ```
 
 Now, an executable _search_ is built in the project root.
+
+### Docker
+
+Alternatively, build the Docker image
+
+```
+docker build -t search .
+```
+
+Run the Docker container
+
+```
+docker run --name search -p <PORT>:<PORT> search
+```
+
+Set _<PORT>_ to the port number specified in _src/config.hpp_.
