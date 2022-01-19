@@ -86,4 +86,9 @@ namespace Pekar
         this->foundDocuments = docs;
         return this->foundDocuments;
     }
+
+    unsigned PostingsList::documentCount() const noexcept
+    {
+        return this->dStore.size();
+    }
 }

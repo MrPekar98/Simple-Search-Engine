@@ -4,11 +4,17 @@
 #include "../query/document_search.hpp"
 #include "../query/query.hpp"
 #include <cpprest/uri_builder.h>
+#include <fstream>
+
+#define KILOBYTE 1024
+#define MEGABYTE 1048576
+#define GIGABYTE 1073741824
 
 namespace Pekar
 {
     static PostingsList index(DATA_FILE);
     static inline std::string parsePostString(const std::string& str);
+    static unsigned long fileSize(const std::string& file);
 
     Server::Server(const std::string& host, const unsigned short& port, const ReturnType& returnType, const std::set<std::string> seedSet)
         : detach(true), seed(seedSet)
@@ -79,7 +85,10 @@ namespace Pekar
     void Server::getHandler(web::http::http_request request)
     {
         using namespace web::http;
-        static std::string homepage = Render::render(HOMEPAGE);
+        long dataConsumption = fileSize(DATA_FILE);
+        std::string dataConsumptionStr = std::to_string(dataConsumption) + (dataConsumption < KILOBYTE ? " B": dataConsumption < KILOBYTE ? " KB" : dataConsumption < MEGABYTE ? " MB" : " GB");
+        static std::string homepage = Render::render(HOMEPAGE, std::to_string(THREADS), std::to_string(SHINGLES),
+                                        HOST, std::to_string(PORT), std::to_string(index.documentCount()), dataConsumptionStr);
         http_response response(status_codes::OK);
         response.set_body(homepage, utf8string("text/html; charset=UTF-8"));
 
@@ -127,5 +136,22 @@ namespace Pekar
         }
 
         return cutStr;
+    }
+
+    // Size of document in bytes
+    static unsigned long fileSize(const std::string& file)
+    {
+        std::ifstream stream(file);
+
+        if (!stream)
+            return 0;
+
+        auto current = stream.tellg();
+        stream.seekg(0, std::ios::end);
+        
+        auto end = stream.tellg();
+        stream.seekg(current, std::ios::beg);
+
+        return end;
     }
 }

@@ -25,6 +25,7 @@ namespace Pekar
         void remove(const Location& key) override;
         Document& find(const Location& key) override;
         const std::set<Location>& getLocations() const noexcept;
+        unsigned size() const noexcept;
 
     private:
         void loadFromFile(std::ifstream& file);

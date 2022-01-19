@@ -75,6 +75,11 @@ namespace Pekar
         return this->tempDocument;
     }
 
+    unsigned DocumentStore::size() const noexcept
+    {
+        return this->locations.size();
+    }
+
     // This is unfortunately dependent on how Document is serialized!
     void DocumentStore::loadFromFile(std::ifstream& file)
     {

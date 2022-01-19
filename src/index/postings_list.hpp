@@ -25,6 +25,7 @@ namespace Pekar
         void remove(const std::string& key) override;
         std::set<Document>& find(const std::string& key) override;
         const std::set<Document>& all() noexcept;
+        unsigned documentCount() const noexcept;
 
     private:
         DocumentIndex dIdx;
