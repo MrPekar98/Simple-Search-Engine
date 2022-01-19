@@ -86,7 +86,11 @@ namespace Pekar
     {
         using namespace web::http;
         long dataConsumption = fileSize(DATA_FILE);
-        std::string dataConsumptionStr = std::to_string(dataConsumption) + (dataConsumption < KILOBYTE ? " B": dataConsumption < KILOBYTE ? " KB" : dataConsumption < MEGABYTE ? " MB" : " GB");
+        std::string dataConsumptionStr = dataConsumption < KILOBYTE ? " B": dataConsumption < MEGABYTE ? " KB" : dataConsumption < GIGABYTE ? " MB" : " GB";
+        dataConsumption = dataConsumption < KILOBYTE ? dataConsumption: dataConsumption < MEGABYTE ? (double) dataConsumption / KILOBYTE : 
+                            dataConsumption < GIGABYTE ? (double) dataConsumption / MEGABYTE : (double) dataConsumption / GIGABYTE;
+        dataConsumptionStr = std::to_string(dataConsumption) + dataConsumptionStr;
+
         static std::string homepage = Render::render(HOMEPAGE, std::to_string(THREADS), std::to_string(SHINGLES),
                                         HOST, std::to_string(PORT), std::to_string(index.documentCount()), dataConsumptionStr);
         http_response response(status_codes::OK);
